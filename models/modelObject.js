@@ -8,7 +8,7 @@ exports.getObjectById = async function (objectId) {
             FROM 
                 object
             WHERE
-                object_id = 1
+                object_id = ?
         `;
         db.query(query, [objectId], function (err, result) {
             console.log(result, err);

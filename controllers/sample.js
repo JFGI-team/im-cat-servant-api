@@ -1,12 +1,11 @@
-const Object = require("../models/modelObject");
+const object = require("../models/modelObject");
 
 exports.getTestObject = async function (req, res, next) {
-    const objectInfo = await Object.getObjectById(1);
-    console.log(objectInfo);
+    const objectInfo = await object.getObjectById(1);
     res.json({
         testParam: req.body.testParam,
         sampleParam: req.body.sampleParam,
-        objectId: objectInfo.object_id,
-        objectName: objectInfo.name,
+        objectId: objectInfo[0].object_id,
+        objectName: objectInfo[0].name,
     });
 };
