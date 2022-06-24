@@ -1,10 +1,9 @@
 const { body } = require("express-validator");
+const defineParam = require("../middleware/validateRequestParam");
 
-const schema = {
+module.exports = defineParam({
     sample: [
         body("testParam").not().isEmpty().withMessage("error message"),
         body("sampleParam").not().isEmpty().withMessage("error message"),
     ],
-};
-
-module.exports = schema;
+});
