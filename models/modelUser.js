@@ -12,6 +12,7 @@ exports.getUserInfoById = async function (id) {
             `;
         db.query(query, [id], function (err, data) {
             resolve(data);
+            console.log(data);
         });
     });
 };
@@ -28,6 +29,7 @@ exports.insertUserAtJoin = async function (id, password, nickname) {
             if (err) {
                 throw res.json(err);
             }
+            console.log("회원가입 완료");
         });
     });
 };

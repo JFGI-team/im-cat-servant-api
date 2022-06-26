@@ -11,7 +11,6 @@ exports.getObjectById = async function (objectId) {
                 object_id = ?
         `;
         db.query(query, [objectId], function (err, result) {
-            console.log(result, err);
             resolve(result);
         });
     });

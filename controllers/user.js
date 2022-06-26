@@ -3,8 +3,7 @@ const user = require("../models/modelUser");
 
 exports.insertUser = async function (req, res, next) {
     const UserInfo = await user.getUserInfoById(req.body.id);
-
-    if (UserInfo[0].id == null) {
+    if (UserInfo[0] == null) {
         const insertInfo = await user.insertUserAtJoin(
             req.body.id,
             req.body.password,
