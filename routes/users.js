@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const user = require("../param/user.js");
-const testController = require("../controllers/sample");
+const userController = require("../controllers/user");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
@@ -9,6 +9,6 @@ router.get("/", function (req, res, next) {
 });
 
 router.post("/join", user.join, (req, res) => {
-    testController.getUserInfo(req, res);
+    userController.insertUser(req, res);
 });
 module.exports = router;
