@@ -23,6 +23,8 @@ exports.upload = function (req, res, next) {
             };
             s3.upload(params, function (err, data) {
                 res.json({ url: data.Location });
+                res.locals.url = data.Location;
+                next();
             });
         }
     });
