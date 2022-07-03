@@ -16,20 +16,25 @@ exports.getUserInfoById = async function (id) {
     });
 };
 
-exports.insertUserAtJoin = async function (id, password, nickname) {
+exports.insertUserAtJoin = async function (id, password, salt, nickname) {
     return new Promise(function (resolve, reject) {
         var query2 = `
                 INSERT INTO
-                    user(id, password, nickname)
+                    user(id, password, salt, nickname)
                 VALUES
-                    (? ,? ,?)
+                    (? ,? ,?, ?)
                 `;
-        db.query(query2, [id, password, nickname], function (err, result) {
-            if (err) {
-                throw res.json(err);
-            }
-            console.log("회원가입 완료");
-        });
+        db.query(
+            query2,
+            [id, password, salt, nickname],
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log("회원가입 완료");
+                }
+            },
+        );
     });
 };
 
