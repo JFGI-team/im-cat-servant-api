@@ -12,7 +12,6 @@ exports.getUserInfoById = async function (id) {
             `;
         db.query(query, [id], function (err, data) {
             resolve(data);
-            console.log(data);
         });
     });
 };
@@ -30,6 +29,25 @@ exports.insertUserAtJoin = async function (id, password, nickname) {
                 throw res.json(err);
             }
             console.log("회원가입 완료");
+        });
+    });
+};
+
+exports.findUserAtDb = async function (id) {
+    return new Promise(function (resolve, reject) {
+        var query3 = `
+            SELECT
+                id, password, salt
+            FROM
+                user
+            WHERE
+                id = ?
+            `;
+        db.query(query3, [id], function (err, result) {
+            if (err) console.log(err);
+            else {
+                resolve(result);
+            }
         });
     });
 };

@@ -14,3 +14,18 @@ exports.insertUser = async function (req, res, next) {
         console.log("exist ID try another ID");
     }
 };
+exports.findUser = async function (req, res, next) {
+    const checkUserInfo = await user.findUserAtDb(req.body.id);
+    const verified = await encryption.verifyPassword(
+        req.body.password,
+        checkUserInfo[0].salt,
+        checkUserInfo[0].password,
+    );
+    if (!verified) {
+        res.json("비밀번호가 일치하지 않습니다.");
+        console.log("비밀번호가 일치하지 않습니다.");
+    } else {
+        res.json("로그인 완료");
+        console.log("로그인 완료");
+    }
+};

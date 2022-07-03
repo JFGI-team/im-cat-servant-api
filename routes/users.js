@@ -11,4 +11,8 @@ router.get("/", function (req, res, next) {
 router.post("/join", user.join, (req, res) => {
     userController.insertUser(req, res);
 });
+
+router.post("/login", user.login, (req, res) => {
+    userController.findUser(req, res);
+});
 module.exports = router;
