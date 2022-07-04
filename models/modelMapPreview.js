@@ -11,13 +11,12 @@ exports.getMapPreviewByMapId = async function (mapId) {
                 map_id = ?
         `;
         db.query(query, [mapId], function (err, result) {
-            console.log(result, err);
             resolve(result);
         });
     });
 };
 
-exports.insetMapPreview = async function (mapId, imageUrl) {
+exports.insertMapPreview = async function (mapId, imageUrl) {
     return new Promise(function (resolve, reject) {
         query = `
             INSERT INTO
@@ -26,7 +25,6 @@ exports.insetMapPreview = async function (mapId, imageUrl) {
                 (?, ?)
         `;
         db.query(query, [mapId, imageUrl], function (err, result) {
-            console.log(result, err);
             resolve(result);
         });
     });
