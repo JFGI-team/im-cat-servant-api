@@ -1,6 +1,7 @@
 const object = require("../models/modelObject");
 const user = require("../models/modelUser");
-const encryption = require("../middleware/function");
+const encryption = require("../middleware/crypto");
+const publishToken = require("../middleware/verifyToken");
 
 exports.insertUser = async function (req, res, next) {
     encryption
@@ -9,8 +10,8 @@ exports.insertUser = async function (req, res, next) {
             hashPassword = password.password;
             dbSalt = password.salt;
         });
-    const UserInfo = await user.getUserInfoById(req.body.id);
-    if (UserInfo[0] == null) {
+    const userInfo = await user.getUserInfoById(req.body.id);
+    if (!userInfo) {
         const insertInfo = await user.insertUserAtJoin(
             req.body.id,
             hashPassword,
@@ -31,9 +32,19 @@ exports.findUser = async function (req, res, next) {
     );
     if (!verified) {
         res.json("비밀번호가 일치하지 않습니다.");
-        console.log("비밀번호가 일치하지 않습니다.");
     } else {
-        res.json("로그인 완료");
-        console.log("로그인 완료");
+        const createToken = await publishToken.createToken(
+            req.body.id,
+            req.body.nickname,
+        );
+        return res.status(200).send({ token: createToken.token });
+    }
+};
+exports.checkToken = async function (req, res, next) {
+    const checkToken = publishToken.verifyToken(req.headers.token);
+    if (!checkToken) {
+        return res.status(200).send("Token valid");
+    } else {
+        return res.status(404).send("Token not valid");
     }
 };
