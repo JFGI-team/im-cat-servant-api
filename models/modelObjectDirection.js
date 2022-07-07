@@ -13,7 +13,6 @@ exports.getObjectDirectionId = async function (objectId, direction) {
                 direction = ?
         `;
         db.query(query, [objectId, direction], function (err, result) {
-            console.log(err);
             resolve(result);
         });
     });

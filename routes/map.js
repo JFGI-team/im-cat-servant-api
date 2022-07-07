@@ -1,8 +1,8 @@
 const express = require("express");
-const map = require("../controllers/map");
-const testParam = require("../param/testParam");
+const mapController = require("../controllers/map");
+const mapParam = require("../param/map");
 const router = express.Router();
 
-router.post("/", map.saveMapData);
+router.post("/", mapParam.index, mapController.saveMapData);
 
 module.exports = router;
