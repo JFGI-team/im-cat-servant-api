@@ -11,7 +11,7 @@ const createSalt = () =>
         });
     });
 
-exports.createHashedPassword = (password) => {
+exports.createHashedPassword = async function (password) {
     return new Promise(async (resolve, reject) => {
         const salt = await createSalt();
         const key = await pbkdf2Promise(password, salt, 104906, 64, "sha512");
@@ -20,7 +20,7 @@ exports.createHashedPassword = (password) => {
     });
 };
 
-exports.verifyPassword = async (password, userSalt, userPassword) => {
+exports.verifyPassword = async function (password, userSalt, userPassword) {
     return new Promise(async (resolve, reject) => {
         const key = await pbkdf2Promise(
             password,
@@ -31,6 +31,6 @@ exports.verifyPassword = async (password, userSalt, userPassword) => {
         );
         const hashedPassword = key.toString("base64");
         if (hashedPassword === userPassword) resolve(true);
-        resolve(false);
+        reject(false);
     });
 };

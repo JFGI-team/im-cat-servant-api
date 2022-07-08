@@ -6,11 +6,11 @@ const publishToken = require("../middleware/verifyToken");
 exports.insertUser = async function (req, res, next) {
     encryption
         .createHashedPassword(req.body.password)
-        .then(function (password, salt) {
+        .then(function (password) {
             hashPassword = password.password;
             dbSalt = password.salt;
         });
-    const userInfo = await user.getUserInfoById(req.body.id);
+    const userInfo = user.getUserInfoById(req.body.id);
     if (!userInfo) {
         const insertInfo = await user.insertUserAtJoin(
             req.body.id,
@@ -19,8 +19,7 @@ exports.insertUser = async function (req, res, next) {
             req.body.nickname,
         );
     } else {
-        res.json("exist ID try another ID");
-        console.log("exist ID try another ID");
+        res.status(400).json({ msg: "exist ID try another ID" });
     }
 };
 exports.findUser = async function (req, res, next) {
@@ -31,7 +30,7 @@ exports.findUser = async function (req, res, next) {
         checkUserInfo[0].password,
     );
     if (!verified) {
-        res.json("비밀번호가 일치하지 않습니다.");
+        res.status(400).json({ msg: "비밀번호가 일치하지 않습니다." });
     } else {
         const createToken = await publishToken.createToken(
             req.body.id,
