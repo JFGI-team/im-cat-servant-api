@@ -13,7 +13,8 @@ exports.getObjectColorId = async function (objectId, color) {
                 color = ?
         `;
         db.query(query, [objectId, color], function (err, result) {
-            resolve(result);
+            if (!err) resolve(result);
+            else reject(err);
         });
     });
 };

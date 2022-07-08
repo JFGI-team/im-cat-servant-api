@@ -28,7 +28,8 @@ exports.insertMapObjectMapping = async function (
                 link,
             ],
             function (err, result) {
-                resolve(result);
+                if (!err) resolve(result);
+                else reject(err);
             },
         );
     });

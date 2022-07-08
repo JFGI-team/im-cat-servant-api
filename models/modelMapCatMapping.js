@@ -18,7 +18,8 @@ exports.insertMapCatMapping = async function (
             query,
             [objectCatId, mapId, name, xLocation, yLocation],
             function (err, result) {
-                resolve(result);
+                if (!err) resolve(result);
+                else reject(err);
             },
         );
     });

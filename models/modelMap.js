@@ -18,7 +18,8 @@ exports.insertMap = async function (
             query,
             [mapId, userId, wallPaperID, floorId, title],
             function (err, result) {
-                resolve(result);
+                if (!err) resolve(result);
+                else reject(err);
             },
         );
     });

@@ -13,16 +13,16 @@ exports.saveMapData = async function (req, res, next) {
         req.body.title,
     );
 
-    var colorId = 0;
-    var directionId = 0;
-
-    req.body.objects.forEach(async (object) => {
-        colorId = await objectColor.getObjectColorId(object.id, object.color);
-        directionId = await objectDirection.getObjectDirectionId(
+    req.body.objects.forEach(async function (object) {
+        const colorId = await objectColor.getObjectColorId(
+            object.id,
+            object.color,
+        );
+        const directionId = await objectDirection.getObjectDirectionId(
             object.id,
             object.direction,
         );
-        await objectMapping.insertMapObjectMapping(
+        objectMapping.insertMapObjectMapping(
             mapId.insertId,
             object.id,
             colorId[0].object_color_id,
@@ -33,8 +33,8 @@ exports.saveMapData = async function (req, res, next) {
         );
     });
 
-    req.body.cats.forEach(async (cat) => {
-        await catMapping.insertMapCatMapping(
+    req.body.cats.forEach(async function (cat) {
+        catMapping.insertMapCatMapping(
             cat.id,
             mapId.insertId,
             cat.name,

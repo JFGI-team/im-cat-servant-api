@@ -25,7 +25,8 @@ exports.insertMapPreview = async function (mapId, imageUrl) {
                 (?, ?)
         `;
         db.query(query, [mapId, imageUrl], function (err, result) {
-            resolve(result);
+            if (!err) resolve(result);
+            else reject(err);
         });
     });
 };
