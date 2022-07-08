@@ -11,7 +11,8 @@ exports.getMapPreviewByMapId = async function (mapId) {
                 map_id = ?
         `;
         db.query(query, [mapId], function (err, result) {
-            resolve(result);
+            if (!err) resolve(result);
+            else reject(err);
         });
     });
 };
