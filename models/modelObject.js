@@ -24,8 +24,8 @@ exports.getColorAndDirection = async function (objectId) {
                 ob.object_id, GROUP_CONCAT(DISTINCT oc.color) AS colors, GROUP_CONCAT(DISTINCT od.direction) AS directions
             FROM 
                 object ob 
-            INNER JOIN object_color oc ON (ob.object_id = oc.object_id)
-            INNER JOIN object_direction od ON (ob.object_id = od.object_id)
+                INNER JOIN object_color oc ON (ob.object_id = oc.object_id)
+                INNER JOIN object_direction od ON (ob.object_id = od.object_id)
             WHERE  
                 ob.object_id = ?
         `;
