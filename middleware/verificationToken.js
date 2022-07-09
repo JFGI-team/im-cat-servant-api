@@ -1,9 +1,9 @@
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 exports.createToken = function (id, nickname) {
-    return new Promise(async (resolve, reject) => {
-        var token = jwt.sign(
+    return new Promise(async function (resolve, reject) {
+        const token = jwt.sign(
             {
                 id: id,
                 nickname: nickname,
@@ -15,23 +15,23 @@ exports.createToken = function (id, nickname) {
                 issuer: "id",
             },
         );
-        resolve({ token });
+        resolve(token);
     });
 };
 
 exports.verifyToken = function (token) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async function (resolve, reject) {
         try {
-            var check = jwt.verify(token, "process.env.SECRET_KEY");
+            const check = jwt.verify(token, "process.env.SECRET_KEY");
+            resolve(check);
         } catch (err) {
             if (err.message === "jwt expired") {
-                resolve(TOKEN_EXPIRED);
+                reject("TOKEN_EXPIRED");
             } else if (err.message === "invalid token") {
-                resolve(TOKEN_INVALID);
+                reject("TOKEN_INVALID");
             } else {
-                resolve(TOKEN_INVALID);
+                reject("TOKEN_INVALID");
             }
         }
-        resolve(check);
     });
 };

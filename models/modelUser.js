@@ -11,30 +11,24 @@ exports.getUserInfoById = async function (id) {
                 id = ?
             `;
         db.query(query, [id], function (err, data) {
-            resolve(data);
+            resolve(data[0]);
         });
     });
 };
 
-exports.insertUserAtJoin = async function (id, password, salt, nickname) {
+exports.insertUserAtJoin = function (id, password, salt, nickname) {
     return new Promise(function (resolve, reject) {
-        var query2 = `
+        try {
+            var query2 = `
                 INSERT INTO
                     user(id, password, salt, nickname)
                 VALUES
                     (? ,? ,?, ?)
                 `;
-        db.query(
-            query2,
-            [id, password, salt, nickname],
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("회원가입 완료");
-                }
-            },
-        );
+            db.query(query2, [id, password, salt, nickname]);
+        } catch (err) {
+            reject(err);
+        }
     });
 };
 
@@ -49,10 +43,8 @@ exports.findUserAtDb = async function (id) {
                 id = ?
             `;
         db.query(query3, [id], function (err, result) {
-            if (err) console.log(err);
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 };

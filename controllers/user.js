@@ -1,21 +1,18 @@
 const object = require("../models/modelObject");
 const user = require("../models/modelUser");
-const encryption = require("../middleware/crypto");
-const publishToken = require("../middleware/verifyToken");
+const encryption = require("../middleware/encryptionPassword");
+const publishToken = require("../middleware/verificationToken");
 
 exports.insertUser = async function (req, res, next) {
-    encryption
-        .createHashedPassword(req.body.password)
-        .then(function (password) {
-            hashPassword = password.password;
-            dbSalt = password.salt;
-        });
-    const userInfo = user.getUserInfoById(req.body.id);
+    const hashedPasswordAndSalt = await encryption.createHashedPassword(
+        req.body.password,
+    );
+    const userInfo = await user.getUserInfoById(req.body.id);
     if (!userInfo) {
-        const insertInfo = await user.insertUserAtJoin(
+        user.insertUserAtJoin(
             req.body.id,
-            hashPassword,
-            dbSalt,
+            hashedPasswordAndSalt.password,
+            hashedPasswordAndSalt.salt,
             req.body.nickname,
         );
     } else {
@@ -32,11 +29,11 @@ exports.findUser = async function (req, res, next) {
     if (!verified) {
         res.status(400).json({ msg: "비밀번호가 일치하지 않습니다." });
     } else {
-        const createToken = await publishToken.createToken(
+        const token = await publishToken.createToken(
             req.body.id,
             req.body.nickname,
         );
-        return res.status(200).send({ token: createToken.token });
+        return res.status(200).send({ token });
     }
 };
 exports.checkToken = async function (req, res, next) {
