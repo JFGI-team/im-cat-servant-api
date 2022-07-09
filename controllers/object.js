@@ -1,12 +1,12 @@
 const object = require("../models/modelObject");
 
 exports.getColorAndDirection = async function (req, res, next) {
-    const objectInfo = await object.getColorAndDirection(1);
-    const values = Object.values(objectInfo[0]);
+    const objectInfo = await object.getColorAndDirection(req.body.objectId);
+    console.log(objectInfo);
 
     res.json({
-        objectId: values[0],
-        color: values[1].split(","),
-        direction: values[2].split(","),
+        objectId: objectInfo.object_id,
+        color: objectInfo.colors,
+        directions: objectInfo.directions,
     });
 };
