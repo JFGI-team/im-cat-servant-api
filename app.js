@@ -9,6 +9,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const uploadRouter = require("./routes/upload");
 const mapRouter = require("./routes/map");
+const objectRouter = require("./routes/object");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/upload", uploadRouter);
 app.use("/map", mapRouter);
+app.use("/object", objectRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
