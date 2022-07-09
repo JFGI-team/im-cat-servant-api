@@ -24,8 +24,10 @@ exports.insertUserAtJoin = function (id, password, salt, nickname) {
                 VALUES
                     ( ?, ?, ?, ?)
                 `;
-        db.query(query2, [id, password, salt, nickname]);
-        if (err) reject(err);
+        db.query(query2, [id, password, salt, nickname], function (err) {
+            if (err) reject(err);
+            else resolve();
+        });
     });
 };
 
