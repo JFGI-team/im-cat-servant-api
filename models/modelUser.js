@@ -18,17 +18,14 @@ exports.getUserInfoById = async function (id) {
 
 exports.insertUserAtJoin = function (id, password, salt, nickname) {
     return new Promise(function (resolve, reject) {
-        try {
-            var query2 = `
+        var query2 = `
                 INSERT INTO
-                    user(id, password, salt, nickname)
+                    user ( id, password, salt, nickname)
                 VALUES
-                    (? ,? ,?, ?)
+                    ( ?, ?, ?, ?)
                 `;
-            db.query(query2, [id, password, salt, nickname]);
-        } catch (err) {
-            reject(err);
-        }
+        db.query(query2, [id, password, salt, nickname]);
+        if (err) reject(err);
     });
 };
 
@@ -44,6 +41,23 @@ exports.findUserAtDb = async function (id) {
             `;
         db.query(query3, [id], function (err, result) {
             if (err) reject(err);
+            else resolve(result);
+        });
+    });
+};
+
+exports.findUserAtDb = async function (id) {
+    return new Promise(function (resolve, reject) {
+        var query3 = `
+            SELECT
+                id, password, salt, nickname
+            FROM
+                user
+            WHERE
+                id = ?
+            `;
+        db.query(query3, [id], function (err, result) {
+            if (err) res.send(err);
             else resolve(result);
         });
     });
