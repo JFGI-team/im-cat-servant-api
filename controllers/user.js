@@ -21,27 +21,27 @@ exports.insertUser = async function (req, res, next) {
     }
 };
 exports.findUser = async function (req, res, next) {
-    const checkUserInfo = await user.findUserAtDb(req.body.id);
-    const verified = await encryption.verifyPassword(
-        req.body.password,
-        checkUserInfo[0].salt,
-        checkUserInfo[0].password,
-    );
-    if (!verified) {
-        res.status(400).json({ error: "비밀번호가 일치하지 않습니다." });
-    } else {
+    try {
+        const checkUserInfo = await user.findUserAtDb(req.body.id);
+        await encryption.verifyPassword(
+            req.body.password,
+            checkUserInfo[0].salt,
+            checkUserInfo[0].password,
+        );
         const token = await publishToken.createToken(
             req.body.id,
             req.body.nickname,
         );
         return res.status(200).json({ token });
+    } catch (error) {
+        res.status(400).json({ error: "비밀번호가 일치하지 않습니다." });
     }
 };
 exports.checkToken = async function (req, res, next) {
-    const checkToken = publishToken.verifyToken(req.headers.token);
-    if (!checkToken) {
+    try {
+        publishToken.verifyToken(req.headers.token);
         return res.status(200).json({ message: "success" });
-    } else {
-        return res.status(404).json({ error: "Token not valid" });
+    } catch (error) {
+        return res.status(404).json({ error: error });
     }
 };

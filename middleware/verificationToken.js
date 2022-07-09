@@ -25,13 +25,9 @@ exports.verifyToken = function (token) {
             const check = jwt.verify(token, "process.env.SECRET_KEY");
             resolve(check);
         } catch (err) {
-            if (err.message === "jwt expired") {
-                reject("TOKEN_EXPIRED");
-            } else if (err.message === "invalid token") {
-                reject("TOKEN_INVALID");
-            } else {
-                reject("TOKEN_INVALID");
-            }
+            if (err.message === "jwt expired") reject("TOKEN_EXPIRED");
+            else if (err.message === "invalid token") reject("TOKEN_INVALID");
+            else reject("TOKEN_INVALID");
         }
     });
 };

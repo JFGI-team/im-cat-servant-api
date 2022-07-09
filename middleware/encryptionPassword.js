@@ -35,28 +35,3 @@ exports.verifyPassword = async function (password, userSalt, userPassword) {
         else reject(false);
     });
 };
-
-// var crypto = require("./crypto");
-// var localStrategy = require("passport-local").Strategy;
-// var strategy = new localStrategy(function (username, password, done) {
-//     if (username === "user" && password === "1234") {
-//         var userinfo = { name: "사용자", nickname: "닉네임" };
-//         done(null, userinfo);
-//     } else {
-//         done(null, false, "로그인 실패");
-//     }
-// });
-// passport.use(strategy);
-
-// passport.serializeUser(function (user, done) {
-//     done(null, user);
-// });
-// passport.deserializeUser(function (user, done) {
-//     done(null, user);
-// });
-
-// passport.authenticate("local", function (err, user, info) {
-//     if (user) {
-//         crypto.verifyPassword();
-//     }
-// });

@@ -7,7 +7,6 @@ const bodyParser = require("body-parser");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
-// var passport = require("passport");
 const app = express();
 
 // view engine setup
@@ -20,8 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(passport.initialize());
-// app.use(passport.session());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
