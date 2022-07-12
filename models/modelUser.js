@@ -31,11 +31,11 @@ exports.insertUserAtJoin = function (id, password, salt, nickname) {
     });
 };
 
-exports.findUserAtDb = async function (id) {
+exports.getUserById = async function (id) {
     return new Promise(function (resolve, reject) {
         var query3 = `
             SELECT
-                id, password, salt
+                id, password, salt, nickname, user_id
             FROM
                 user
             WHERE
@@ -43,23 +43,6 @@ exports.findUserAtDb = async function (id) {
             `;
         db.query(query3, [id], function (err, result) {
             if (err) reject(err);
-            else resolve(result);
-        });
-    });
-};
-
-exports.findUserAtDb = async function (id) {
-    return new Promise(function (resolve, reject) {
-        var query3 = `
-            SELECT
-                id, password, salt, nickname
-            FROM
-                user
-            WHERE
-                id = ?
-            `;
-        db.query(query3, [id], function (err, result) {
-            if (err) res.send(err);
             else resolve(result);
         });
     });

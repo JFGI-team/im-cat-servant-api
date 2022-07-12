@@ -13,6 +13,6 @@ router.post("/join", user.join, (req, res) => {
 });
 
 router.post("/login", user.login, (req, res) => {
-    userController.findUser(req, res);
+    userController.verify(req, res);
 });
 module.exports = router;

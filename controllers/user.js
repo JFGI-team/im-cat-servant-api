@@ -2,6 +2,7 @@ const object = require("../models/modelObject");
 const user = require("../models/modelUser");
 const encryption = require("../middleware/encryptionPassword");
 const publishToken = require("../middleware/verificationToken");
+const decryption = require("../middleware/decryptionToken");
 
 exports.insertUser = async function (req, res, next) {
     const hashedPasswordAndSalt = await encryption.createHashedPassword(
@@ -20,28 +21,21 @@ exports.insertUser = async function (req, res, next) {
         res.status(400).json({ message: "exist ID try another ID" });
     }
 };
-exports.findUser = async function (req, res, next) {
+exports.verify = async function (req, res, next) {
     try {
-        const checkUserInfo = await user.findUserAtDb(req.body.id);
+        const checkUserInfo = await user.getUserById(req.body.id);
         await encryption.verifyPassword(
             req.body.password,
             checkUserInfo[0].salt,
             checkUserInfo[0].password,
         );
         const token = await publishToken.createToken(
-            req.body.id,
-            req.body.nickname,
+            checkUserInfo[0].user_id,
+            checkUserInfo[0].id,
+            checkUserInfo[0].nickname,
         );
         return res.status(200).json({ token });
     } catch (error) {
         res.status(400).json({ error: "비밀번호가 일치하지 않습니다." });
-    }
-};
-exports.checkToken = async function (req, res, next) {
-    try {
-        publishToken.verifyToken(req.headers.token);
-        return res.status(200).json({ message: "success" });
-    } catch (error) {
-        return res.status(404).json({ error: error });
     }
 };

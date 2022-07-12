@@ -1,17 +1,18 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.createToken = function (id, nickname) {
+exports.createToken = function (user_id, id, nickname) {
     return new Promise(async function (resolve, reject) {
         const token = jwt.sign(
             {
+                userNo: user_id,
                 id: id,
                 nickname: nickname,
             },
             "process.env.SECRET_KEY",
             {
                 subject: "IM_CAT_SERVANT jwtToken",
-                expiresIn: "60m",
+                expiresIn: "1200m",
                 issuer: "id",
             },
         );
