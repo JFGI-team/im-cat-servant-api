@@ -10,21 +10,17 @@ exports.getColorAndDirection = async function (req, res, next) {
     });
 };
 
-exports.searchObjects = async function (req, res) {
-    let ObjectArray = []; //const는 값을 바꿀수 없어서 let 사용
-    if (req.body.searchKeyword == null && req.body.category == null)
-        objectArray = await object.getObjectsByPaging(
-            req.body.limit,
-            req.body.pageId,
-        );
-    else if (req.body.searchKeyword != null && req.body.category == null)
-        objectArray = await object.getObjectsBySearchKeyword(
-            req.body.searchKeyword,
-        );
-    else objectArray = await object.getObjectsByCategory(req.body.category);
-
+exports.getObjectList = async function (req, res, next) {
+    const objectIdStr = await object.getObjectsBySearchAndCategory(
+        req.body.searchKeyword,
+        req.body.category,
+    );
+    const objectIdList = objectIdStr.object_id
+        .split(",")
+        .splice(req.body.lastMapId, req.body.lastMapId + req.body.limit);
+    const pagingList = await object.getObjectsByPaging(objectIdList);
     res.json({
-        totalCount: objectArray.length,
-        objects: objectArray,
+        totalCount: pagingList.length,
+        objects: pagingList,
     });
 };

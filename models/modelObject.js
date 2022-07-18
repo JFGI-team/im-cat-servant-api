@@ -39,51 +39,49 @@ exports.getColorAndDirection = async function (objectId) {
     });
 };
 
-exports.getObjectsByPaging = async function (limit, pageId) {
+exports.getObjectsBySearchAndCategory = async function (
+    searchKeyword,
+    category,
+) {
     return new Promise(function (resolve, reject) {
-        query = `
-            SELECT 
-                object_id, image_url, name
-            FROM 
-                object
-            LIMIT ? OFFSET ?
-        `;
-        db.query(query, [limit, (pageId - 1) * limit], function (err, result) {
-            if (!err) resolve(result);
-            else reject(err);
-        });
-    });
-};
+        let sWhere = "";
+        let cWhere = "";
+        if (searchKeyword != "") sWhere = "AND ob.name LIKE ?";
+        if (category != "") cWhere = "AND ca.name = ?";
 
-exports.getObjectsByCategory = async function (category) {
-    return new Promise(function (resolve, reject) {
         query = `
             SELECT 
-                ob.object_id, ob.image_url, ob.name
+                GROUP_CONCAT(ob.object_id) AS object_id
             FROM 
                 object ob
                 LEFT JOIN category ca ON ob.category_id = ca.category_id
             WHERE
-                ca.name LIKE ?
+                1=1
+                ${sWhere}
+                ${cWhere}
         `;
-        db.query(query, [category], function (err, result) {
-            if (!err) resolve(result);
-            else reject(err);
-        });
+        db.query(
+            query,
+            [searchKeyword + "%", category],
+            function (err, result) {
+                if (!err) resolve(result[0]);
+                else reject(err);
+            },
+        );
     });
 };
 
-exports.getObjectsBySearchKeyword = async function (searchKeyword) {
+exports.getObjectsByPaging = async function (objectIdList) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT 
                 object_id, image_url, name
             FROM 
                 object
-            WHERE
-                name LIKE ?
+            WHERE 
+                object_id IN (?)
         `;
-        db.query(query, ["%" + searchKeyword + "%"], function (err, result) {
+        db.query(query, [objectIdList], function (err, result) {
             if (!err) resolve(result);
             else reject(err);
         });
