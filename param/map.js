@@ -75,4 +75,5 @@ module.exports = defineParam({
             .isEmpty()
             .withMessage("name이 없습니다"),
     ],
+    id: [body("id").not().isEmpty().withMessage("아이디가 없습니다")],
 });

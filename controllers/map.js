@@ -3,6 +3,7 @@ const map = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
+const RowDataPacket = require("mysql/lib/protocol/packets/RowDataPacket");
 
 exports.saveMapData = async function (req, res, next) {
     const mapId = await map.insertMap(
@@ -46,4 +47,19 @@ exports.saveMapData = async function (req, res, next) {
     res.json({
         mapId: mapId.insertId,
     });
+};
+
+exports.inquiryMap = async function (req, res, next) {
+    try {
+        const userMap = await map.getMap(req.body.id);
+        const mapInfo = [];
+        const mapInfoDetail = [];
+        userMap.forEach(async function (userMapLength) {
+            const userCat = await map.getCat(userMapLength.map_id);
+            const userObject = await map.getObject(userMapLength.map_id);
+            console.log(userMap[userMapLength.map_id - 1]);
+        });
+    } catch (err) {
+        console.log(err);
+    }
 };
