@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const defineParam = require("../middleware/validateRequestParam");
 
 module.exports = defineParam({
@@ -75,5 +75,5 @@ module.exports = defineParam({
             .isEmpty()
             .withMessage("name이 없습니다"),
     ],
-    id: [body("id").not().isEmpty().withMessage("아이디가 없습니다")],
+    id: [param("map_id").not().isEmpty().withMessage("맵 아이디가 없습니다")],
 });

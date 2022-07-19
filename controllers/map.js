@@ -51,14 +51,25 @@ exports.saveMapData = async function (req, res, next) {
 
 exports.inquiryMap = async function (req, res, next) {
     try {
-        const userMap = await map.getMap(req.body.id);
-        const mapInfo = [];
-        const mapInfoDetail = [];
-        userMap.forEach(async function (userMapLength) {
-            const userCat = await map.getCat(userMapLength.map_id);
-            const userObject = await map.getObject(userMapLength.map_id);
-            console.log(userMap[userMapLength.map_id - 1]);
-        });
+        const userMap = await map.getMap(req.params.map_id);
+        const mapInfo = new Array();
+
+        for (let mapDt of userMap) {
+            const userCat = await map.getCat(mapDt.map_id);
+            const userObject = await map.getObject(mapDt.map_id);
+            const object = {
+                user_id: userMap.user_id,
+                nickname: userMap.nickname,
+                floorId: userMap.floor_id,
+                wallpaperId: userMap.wallpaper_id,
+                title: userMap.title,
+                map_id: userMap.map_id,
+                objects: userObject,
+                cats: userCat,
+            };
+            mapInfo.push(object);
+        }
+        res.status(200).send(mapInfo);
     } catch (err) {
         console.log(err);
     }

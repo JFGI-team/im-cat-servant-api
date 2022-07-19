@@ -31,10 +31,10 @@ exports.getMap = async function (id) {
             SELECT
             us.user_id ,us.nickname, mp.floor_id, mp.wallpaper_id, mp.title, mp.map_id
             FROM
-                user us
-                INNER JOIN map mp ON (us.user_id = mp.user_id)
+                map mp
+                INNER JOIN user us ON (us.user_id = mp.user_id)
             WHERE
-                us.id = ? 
+                mp.map_id = ? 
                 
         `;
         db.query(query, [id], function (err, result) {
@@ -56,6 +56,7 @@ exports.getCat = async function (map_id) {
                 FROM
                     map_cat_mapping mcp
                     INNER JOIN object_cat oc ON(mcp.object_cat_id = oc.object_cat_id)
+                    
                 WHERE
 	                mcp.map_id	= ?
                 `;
