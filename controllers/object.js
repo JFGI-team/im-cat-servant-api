@@ -11,16 +11,19 @@ exports.getColorAndDirection = async function (req, res, next) {
 };
 
 exports.getObjectList = async function (req, res, next) {
-    const objectIdStr = await object.getObjectsBySearchAndCategory(
+    const objectIdStr = await object.getObjectListBySearchAndCategory(
         req.body.searchKeyword,
         req.body.category,
     );
     const objectIdList = objectIdStr.object_id
-        .split(",")
-        .splice(req.body.lastMapId, req.body.lastMapId + req.body.limit);
-    const pagingList = await object.getObjectsByPaging(objectIdList);
+        ?.split(",")
+        ?.slice(req.body.lastMapId, req.body.lastMapId + req.body.limit);
+
+    let pagingObjectList = [];
+    if (objectIdList.length != 0)
+        pagingObjectList = await object.getObjectListByPaging(objectIdList);
     res.json({
-        totalCount: pagingList.length,
-        objects: pagingList,
+        totalCount: pagingObjectList.length,
+        objects: pagingObjectList,
     });
 };

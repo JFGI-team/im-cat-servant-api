@@ -39,7 +39,7 @@ exports.getColorAndDirection = async function (objectId) {
     });
 };
 
-exports.getObjectsBySearchAndCategory = async function (
+exports.getObjectListBySearchAndCategory = async function (
     searchKeyword,
     category,
 ) {
@@ -71,7 +71,7 @@ exports.getObjectsBySearchAndCategory = async function (
     });
 };
 
-exports.getObjectsByPaging = async function (objectIdList) {
+exports.getObjectListByPaging = async function (objectIdList) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT 
