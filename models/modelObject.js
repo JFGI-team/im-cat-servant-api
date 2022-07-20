@@ -44,10 +44,10 @@ exports.getObjectListBySearchAndCategory = async function (
     category,
 ) {
     return new Promise(function (resolve, reject) {
-        let sWhere = "";
-        let cWhere = "";
-        if (searchKeyword != "") sWhere = "AND ob.name LIKE ?";
-        if (category != "") cWhere = "AND ca.name = ?";
+        let searchWhere = "";
+        let categoryWhere = "";
+        if (searchKeyword) searchWhere = "AND ob.name LIKE ?";
+        if (category) categoryWhere = "AND ca.name = ?";
 
         query = `
             SELECT 
@@ -57,9 +57,10 @@ exports.getObjectListBySearchAndCategory = async function (
                 LEFT JOIN category ca ON ob.category_id = ca.category_id
             WHERE
                 1=1
-                ${sWhere}
-                ${cWhere}
+                ${searchWhere}
+                ${categoryWhere}
         `;
+        console.log(query);
         db.query(
             query,
             [searchKeyword + "%", category],
@@ -71,7 +72,7 @@ exports.getObjectListBySearchAndCategory = async function (
     });
 };
 
-exports.getObjectListByPaging = async function (objectIdList) {
+exports.getObejctListByIdList = async function (objectIdList) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT 

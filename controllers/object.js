@@ -10,20 +10,29 @@ exports.getColorAndDirection = async function (req, res, next) {
     });
 };
 
-exports.getObjectList = async function (req, res, next) {
+exports.getObjectIdList = async function (req, res, next) {
     const objectIdStr = await object.getObjectListBySearchAndCategory(
         req.body.searchKeyword,
         req.body.category,
     );
-    const objectIdList = objectIdStr.object_id
-        ?.split(",")
-        ?.slice(req.body.lastMapId, req.body.lastMapId + req.body.limit);
+    if (!objectIdStr.object_id) {
+        res.json({
+            totalCount: 0,
+            objects: [],
+        });
+    } else {
+        let start = 0;
+        if (req.body.lastMapId) start = req.body.lastMapId - 1;
+        const objectIdList = objectIdStr.object_id
+            .split(",")
+            .slice(start, start + req.body.limit);
+        const pagingObjectList = await object.getObejctListByIdList(
+            objectIdList,
+        );
 
-    let pagingObjectList = [];
-    if (objectIdList.length != 0)
-        pagingObjectList = await object.getObjectListByPaging(objectIdList);
-    res.json({
-        totalCount: pagingObjectList.length,
-        objects: pagingObjectList,
-    });
+        res.json({
+            totalCount: objectIdList.length,
+            objects: pagingObjectList,
+        });
+    }
 };
