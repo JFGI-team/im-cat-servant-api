@@ -9,7 +9,6 @@ const usersRouter = require("./routes/users");
 const uploadRouter = require("./routes/upload");
 const mapRouter = require("./routes/map");
 const objectRouter = require("./routes/object");
-
 const app = express();
 
 // view engine setup

@@ -47,3 +47,50 @@ exports.saveMapData = async function (req, res, next) {
         mapId: mapId.insertId,
     });
 };
+
+exports.getMapAllObject = async function (req, res, next) {
+    try {
+        const mapInfo = await map.getMapByMapId(req.params.map_id);
+        const mapCat = await catMapping.getCatListByMapId(mapInfo.map_id);
+        const mapObject = await objectMapping.getObjectListByMapId(
+            mapInfo.map_id,
+        );
+        const object = [];
+        for (objectRow of mapObject) {
+            console.log(objectRow);
+            const objectDetail = {
+                object_id: objectRow.object_id,
+                color: objectRow.color,
+                image_url: objectRow.image_url,
+                direction: objectRow.direction,
+                x_location: objectRow.x_location,
+                y_location: objectRow.y_location,
+                link: objectRow.link,
+            };
+            object.push(objectDetail);
+        }
+        const cat = [];
+        for (catRow of mapCat) {
+            const catDetail = {
+                object_cat_id: catRow.object_cat_id,
+                x_location: catRow.x_location,
+                y_location: catRow.y_location,
+                name: catRow.name,
+                image_url: catRow.image_url,
+            };
+            cat.push(catDetail);
+        }
+        const mapDetail = {
+            user_id: mapInfo.user_id,
+            nickname: mapInfo.nickname,
+            floorId: mapInfo.floor_id,
+            wallpaperId: mapInfo.wallpaper_id,
+            title: mapInfo.title,
+            map_id: mapInfo.map_id,
+        };
+        const finalMap = { mapDetail, object, cat };
+        res.status(200).send(finalMap);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+};

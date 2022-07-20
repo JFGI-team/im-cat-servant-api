@@ -5,4 +5,7 @@ const router = express.Router();
 
 router.post("/", mapParam.index, mapController.saveMapData);
 
+router.get("/:map_id", mapParam.id, (req, res) => {
+    mapController.getMapAllObject(req, res);
+});
 module.exports = router;
