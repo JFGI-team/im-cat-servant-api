@@ -1,4 +1,5 @@
 const object = require("../models/modelObject");
+const cat = require("../models/modelObjectCat");
 
 exports.getColorAndDirection = async function (req, res, next) {
     const objectInfo = await object.getColorAndDirection(req.body.objectId);
@@ -15,24 +16,28 @@ exports.getObjectIdList = async function (req, res, next) {
         req.body.searchKeyword,
         req.body.category,
     );
-    if (!objectIdStr.object_id) {
-        res.json({
-            totalCount: 0,
-            objects: [],
-        });
-    } else {
-        let start = 0;
-        if (req.body.lastMapId) start = req.body.lastMapId - 1;
-        const objectIdList = objectIdStr.object_id
-            .split(",")
-            .slice(start, start + req.body.limit);
-        const pagingObjectList = await object.getObejctListByIdList(
-            objectIdList,
-        );
 
-        res.json({
-            totalCount: objectIdList.length,
-            objects: pagingObjectList,
-        });
+    const objectListMap = new Map([
+        ["totalCount", 0],
+        ["objects", []],
+        ["lastMapId", req.body.lastMapId],
+    ]);
+
+    if (!objectListMap.lastMapId) objectListMap.lastMapId = 1;
+    if (objectIdStr.object_id) {
+        objectListMap.objects = objectIdStr.object_id?.split(",");
+        objectListMap.totalCount = objectListMap.objects.length;
+        objectListMap.objects = objectListMap.objects.slice(
+            objectListMap.lastMapId - 1,
+            objectListMap.lastMapId - 1 + req.body.limit,
+        );
+        objectListMap.objects = await object.getObejctListByIdList(
+            objectListMap.objects,
+        );
     }
+
+    res.json({
+        totalCount: objectListMap.totalCount,
+        objects: objectListMap.objects,
+    });
 };
