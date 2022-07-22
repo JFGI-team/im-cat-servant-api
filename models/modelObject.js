@@ -46,7 +46,8 @@ exports.getObjectListBySearchAndCategory = async function (
     return new Promise(function (resolve, reject) {
         let searchWhere = "";
         let categoryWhere = "";
-        if (searchKeyword) searchWhere = `AND ob.name LIKE "${searchKeyword}%"`;
+        if (searchKeyword)
+            searchWhere = `AND ob.name LIKE "%${searchKeyword}%"`;
         if (category) categoryWhere = `AND ca.name = "${category}"`;
 
         query = `
