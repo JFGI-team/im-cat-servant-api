@@ -7,7 +7,7 @@ const objectDirection = require("../models/modelObjectDirection");
 exports.saveMapData = async function (req, res, next) {
     const mapId = await map.insertMap(
         null,
-        1, //userID인데 헤더에 포함되서 오는거라서 일단은 임의로 지정
+        1,
         req.body.wallpaperId,
         req.body.floorId,
         req.body.title,
