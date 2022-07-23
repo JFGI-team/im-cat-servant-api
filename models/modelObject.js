@@ -38,3 +38,49 @@ exports.getColorAndDirection = async function (objectId) {
         });
     });
 };
+
+exports.getObjectListBySearchAndCategory = async function (
+    searchKeyword,
+    category,
+) {
+    return new Promise(function (resolve, reject) {
+        let searchWhere = "";
+        let categoryWhere = "";
+        if (searchKeyword)
+            searchWhere = `AND ob.name LIKE "%${searchKeyword}%"`;
+        if (category) categoryWhere = `AND ca.name = "${category}"`;
+
+        query = `
+            SELECT 
+                GROUP_CONCAT(ob.object_id ORDER BY ob.object_id) AS object_id
+            FROM 
+                object ob
+                LEFT JOIN category ca ON ob.category_id = ca.category_id
+            WHERE
+                1=1
+                ${searchWhere}
+                ${categoryWhere}
+        `;
+        db.query(query, function (err, result) {
+            if (!err) resolve(result[0]);
+            else reject(err);
+        });
+    });
+};
+
+exports.getObejctListByIdList = async function (objectIdList) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            SELECT 
+                object_id, image_url, name
+            FROM 
+                object
+            WHERE 
+                object_id IN (?)
+        `;
+        db.query(query, [objectIdList], function (err, result) {
+            if (!err) resolve(result);
+            else reject(err);
+        });
+    });
+};
