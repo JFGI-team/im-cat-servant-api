@@ -50,16 +50,16 @@ exports.saveMapData = async function (req, res, next) {
 
 exports.getMapAllObject = async function (req, res, next) {
     try {
-        const object = [];
-        const cat = [];
+        const objects = [];
+        const cats = [];
 
         const mapInfo = await maps.getMapByMapId(req.params.map_id);
         const mapCat = await catMapping.getCatListByMapId(mapInfo.map_id);
         const mapObject = await objectMapping.getObjectListByMapId(
             mapInfo.map_id,
         );
-        // objArray.map((obj) => {});
-        for (objectRow of mapObject) {
+
+        mapObject.map(function (objectRow) {
             const objectDetail = {
                 objectId: objectRow.object_id,
                 color: objectRow.color,
@@ -69,10 +69,10 @@ exports.getMapAllObject = async function (req, res, next) {
                 yLocation: objectRow.y_location,
                 link: objectRow.link,
             };
+            objects.push(objectDetail);
+        });
 
-            object.push(objectDetail);
-        }
-        for (catRow of mapCat) {
+        mapCat.map(function (catRow) {
             const catDetail = {
                 objectCatId: catRow.object_cat_id,
                 xLocation: catRow.x_location,
@@ -80,8 +80,8 @@ exports.getMapAllObject = async function (req, res, next) {
                 name: catRow.name,
                 imageUrl: catRow.image_url,
             };
-            cat.push(catDetail);
-        }
+            cats.push(catDetail);
+        });
         const mapDetail = {
             userId: mapInfo.user_id,
             nickname: mapInfo.nickname,
@@ -90,7 +90,7 @@ exports.getMapAllObject = async function (req, res, next) {
             title: mapInfo.title,
             mapId: mapInfo.map_id,
         };
-        const finalMap = { mapDetail, object, cat };
+        const finalMap = { mapDetail, objects, cats };
         res.status(200).send(finalMap);
     } catch (err) {
         res.status(400).send(err);
