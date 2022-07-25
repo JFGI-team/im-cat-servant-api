@@ -4,7 +4,7 @@ exports.getCatList = async function () {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT 
-                *
+                object_cat_id, image_url
             FROM 
                 object_cat
         `;

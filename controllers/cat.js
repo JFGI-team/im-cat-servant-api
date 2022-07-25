@@ -5,6 +5,7 @@ exports.getRandomCat = async function (req, res, next) {
     const randomCat = catList[Math.floor(Math.random() * catList.length)];
 
     res.json({
-        randomCat,
+        catId: randomCat.object_cat_id,
+        imageUrl: randomCat.image_url,
     });
 };
