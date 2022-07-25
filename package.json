@@ -10,6 +10,7 @@
         "aws-sdk": "^2.1163.0",
         "cookie-parser": "~1.4.4",
         "debug": "~2.6.9",
+        "deepmerge": "^4.2.2",
         "dotenv": "^16.0.1",
         "express": "~4.16.1",
         "formidable": "^2.0.1",

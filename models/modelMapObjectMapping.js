@@ -38,7 +38,7 @@ exports.insertMapObjectMapping = async function (
 exports.getObjectListByMapId = async function (map_id) {
     return new Promise(function (resolve, reject) {
         try {
-            query3 = `
+            query = `
                 SELECT
 	                mop.object_id, oc.color, o.image_url, od.direction, mop.x_location, mop.y_location, mop.link
                 FROM
@@ -49,7 +49,7 @@ exports.getObjectListByMapId = async function (map_id) {
                 WHERE
                     mop.map_id = ?
             `;
-            db.query(query3, [map_id], function (err, result) {
+            db.query(query, [map_id], function (err, result) {
                 if (err) reject(err);
                 else resolve(result);
             });

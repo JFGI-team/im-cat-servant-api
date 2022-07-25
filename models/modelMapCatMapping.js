@@ -28,7 +28,7 @@ exports.insertMapCatMapping = async function (
 exports.getCatListByMapId = async function (map_id) {
     return new Promise(function (resolve, reject) {
         try {
-            query2 = `
+            query = `
                 SELECT
 	                mcp.object_cat_id, mcp.x_location, mcp.y_location, mcp.name, oc.image_url
                 FROM
@@ -37,7 +37,7 @@ exports.getCatListByMapId = async function (map_id) {
                 WHERE
 	                mcp.map_id = ?
                 `;
-            db.query(query2, [map_id], function (err, result2) {
+            db.query(query, [map_id], function (err, result2) {
                 if (err) reject(err);
                 resolve(result2);
             });
