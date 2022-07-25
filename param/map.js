@@ -75,7 +75,12 @@ module.exports = defineParam({
             .isEmpty()
             .withMessage("name이 없습니다"),
     ],
-    id: [
-        param("map_id").not().isEmpty().withMessage("1이상의 숫자여야 됩니다!"),
+    map_id: [
+        param("map_id")
+            .not()
+            .isEmpty()
+            .withMessage("1이상의 숫자여야 됩니다!")
+            .isInt({ min: 1 })
+            .withMessage("map_id는 1이상의 자연수여야 합니다"),
     ],
 });

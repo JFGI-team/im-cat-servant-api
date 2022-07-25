@@ -43,15 +43,15 @@ exports.getObjectListByMapId = async function (map_id) {
 	                mop.object_id, oc.color, o.image_url, od.direction, mop.x_location, mop.y_location, mop.link
                 FROM
                     map_object_mapping mop
-                    INNER JOIN object_color oc ON (mop.object_id = oc.object_id and mop.object_color_id = oc.object_color_id)
+                    INNER JOIN object_color oc ON (mop.object_id = oc.object_id AND mop.object_color_id = oc.object_color_id)
                     INNER JOIN object o ON (mop.object_id = o.object_id)
-                    INNER JOIN object_direction od ON (mop.object_id = od.object_id and mop.object_direction_id = od.object_direction_id)
+                    INNER JOIN object_direction od ON (mop.object_id = od.object_id AND mop.object_direction_id = od.object_direction_id)
                 WHERE
                     mop.map_id = ?
             `;
             db.query(query3, [map_id], function (err, result) {
                 if (err) reject(err);
-                resolve(result);
+                else resolve(result);
             });
         } catch (err) {
             reject(err);
