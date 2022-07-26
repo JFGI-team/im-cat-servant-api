@@ -1,5 +1,4 @@
 const object = require("../models/modelObject");
-const objectCat = require("../models/modelObjectCat");
 
 exports.getColorAndDirection = async function (req, res, next) {
     const objectInfo = await object.getColorAndDirection(req.body.objectId);

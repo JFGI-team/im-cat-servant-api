@@ -3,7 +3,6 @@ const maps = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
-const merge = require("deepmerge");
 
 exports.saveMapData = async function (req, res, next) {
     const mapId = await maps.insertMap(
