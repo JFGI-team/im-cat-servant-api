@@ -3,6 +3,7 @@ const map = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
+const user = require("../models/modelUser");
 
 exports.saveMapData = async function (req, res, next) {
     const mapId = await map.insertMap(
@@ -11,6 +12,7 @@ exports.saveMapData = async function (req, res, next) {
         req.body.wallpaperId,
         req.body.floorId,
         req.body.title,
+        null,
     );
 
     req.body.objects.forEach(async function (object) {
@@ -45,5 +47,42 @@ exports.saveMapData = async function (req, res, next) {
 
     res.json({
         mapId: mapId.insertId,
+    });
+};
+
+exports.saveProfile = async function (req, res, next) {
+    const mapId = await map.insertMap(
+        null,
+        null,
+        null,
+        null,
+        req.body.title,
+        req.body.description,
+    );
+
+    res.json({
+        mapId: mapId.insertId,
+    });
+};
+
+exports.updateProfile = async function (req, res, next) {
+    map.updateProfileByMapId(
+        req.body.mapId,
+        req.body.title,
+        req.body.description,
+    );
+
+    res.status(200).json({
+        message: `Update Map Profile Success`,
+    });
+};
+
+exports.getProfile = async function (req, res, next) {
+    const profile = await map.getProfileByMapId(req.body.mapId);
+    console.log(profile);
+    res.json({
+        nickname: profile.nickname,
+        title: profile.title,
+        description: profile.description,
     });
 };

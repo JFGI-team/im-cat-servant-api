@@ -75,4 +75,8 @@ module.exports = defineParam({
             .isEmpty()
             .withMessage("name이 없습니다"),
     ],
+    profile: [
+        body("title").trim().not().isEmpty().withMessage("title이 없습니다."),
+        body("description").trim(),
+    ],
 });
