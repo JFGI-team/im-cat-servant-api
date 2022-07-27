@@ -24,3 +24,25 @@ exports.insertMap = async function (
         );
     });
 };
+
+exports.getMapByMapId = async function (mapId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            SELECT
+                u.user_id ,u.nickname, m.floor_id, m.wallpaper_id, m.title, m.map_id
+            FROM
+                map m
+                INNER JOIN user u ON (u.user_id = m.user_id)
+            WHERE
+                m.map_id = ? 
+                
+        `;
+        db.query(query, [mapId], function (err, result) {
+            try {
+                resolve(result[0]);
+            } catch {
+                console.log(err);
+            }
+        });
+    });
+};

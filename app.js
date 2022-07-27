@@ -3,13 +3,11 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const uploadRouter = require("./routes/upload");
 const mapRouter = require("./routes/map");
 const objectRouter = require("./routes/object");
-
 const app = express();
 
 // view engine setup
