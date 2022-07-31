@@ -46,12 +46,13 @@ exports.getObjectListBySearchAndCategory = async function (
     return new Promise(function (resolve, reject) {
         let searchWhere = "";
         let categoryWhere = "";
-        if (searchKeyword) searchWhere = "AND ob.name LIKE ?";
-        if (category) categoryWhere = "AND ca.name = ?";
+        if (searchKeyword)
+            searchWhere = `AND ob.name LIKE "%${searchKeyword}%"`;
+        if (category) categoryWhere = `AND ca.name = "${category}"`;
 
         query = `
             SELECT 
-                GROUP_CONCAT(ob.object_id) AS object_id
+                GROUP_CONCAT(ob.object_id ORDER BY ob.object_id) AS object_id
             FROM 
                 object ob
                 LEFT JOIN category ca ON ob.category_id = ca.category_id
@@ -60,15 +61,10 @@ exports.getObjectListBySearchAndCategory = async function (
                 ${searchWhere}
                 ${categoryWhere}
         `;
-        console.log(query);
-        db.query(
-            query,
-            [searchKeyword + "%", category],
-            function (err, result) {
-                if (!err) resolve(result[0]);
-                else reject(err);
-            },
-        );
+        db.query(query, function (err, result) {
+            if (!err) resolve(result[0]);
+            else reject(err);
+        });
     });
 };
 
