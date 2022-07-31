@@ -51,9 +51,10 @@ exports.saveMapData = async function (req, res, next) {
 };
 
 exports.saveProfile = async function (req, res, next) {
+    const decode = await description.verifyToken(req.headers.authorization);
     const mapId = await map.insertMap(
         null,
-        null,
+        decode.userNo,
         null,
         null,
         req.body.title,
@@ -66,20 +67,25 @@ exports.saveProfile = async function (req, res, next) {
 };
 
 exports.updateProfile = async function (req, res, next) {
-    map.updateProfileByMapId(
+    map.map.updateProfileByMapId(
         req.body.mapId,
         req.body.title,
         req.body.description,
     );
 
     res.status(200).json({
-        message: `Update Map Profile Success`,
+        message: `Update Profile Success`,
     });
 };
 
 exports.getProfile = async function (req, res, next) {
-    const profile = await map.getProfileByMapId(req.body.mapId);
-    console.log(profile);
+    const profile = await map.getProfileByMapId(req.query.mapId);
+    if (!profile) {
+        return res.status(400).json({
+            error: "유효하지 않는 MapID입니다.",
+        });
+    }
+
     res.json({
         nickname: profile.nickname,
         title: profile.title,
