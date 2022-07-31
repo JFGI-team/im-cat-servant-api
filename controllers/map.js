@@ -3,7 +3,7 @@ const maps = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
-const user = require("../models/modelUser");
+const description = require("../middleware/decryptionToken");
 
 exports.saveMapData = async function (req, res, next) {
     const mapId = await maps.insertMap(
@@ -103,7 +103,7 @@ exports.getMapAllObject = async function (req, res, next) {
 
 exports.saveProfile = async function (req, res, next) {
     const decode = await description.verifyToken(req.headers.authorization);
-    const mapId = await map.insertMap(
+    const mapId = await maps.insertMap(
         null,
         decode.userNo,
         null,
@@ -118,7 +118,14 @@ exports.saveProfile = async function (req, res, next) {
 };
 
 exports.updateProfile = async function (req, res, next) {
-    map.map.updateProfileByMapId(
+    const profile = await maps.getProfileByMapId(req.body.mapId);
+    if (!profile) {
+        return res.status(400).json({
+            error: "존재하지 않는 프로필에 대한 Update요청입니다.",
+        });
+    }
+
+    maps.updateProfileByMapId(
         req.body.mapId,
         req.body.title,
         req.body.description,
@@ -130,10 +137,10 @@ exports.updateProfile = async function (req, res, next) {
 };
 
 exports.getProfile = async function (req, res, next) {
-    const profile = await map.getProfileByMapId(req.query.mapId);
+    const profile = await maps.getProfileByMapId(req.query.mapId);
     if (!profile) {
         return res.status(400).json({
-            error: "유효하지 않는 MapID입니다.",
+            error: "존재하지 않는 프로필에 대한 get요청입니다.",
         });
     }
 
@@ -142,3 +149,4 @@ exports.getProfile = async function (req, res, next) {
         title: profile.title,
         description: profile.description,
     });
+};

@@ -1,4 +1,4 @@
-const { body, param } = require("express-validator");
+const { body, param, query } = require("express-validator");
 const defineParam = require("../middleware/validateRequestParam");
 
 module.exports = defineParam({
@@ -84,7 +84,26 @@ module.exports = defineParam({
             .withMessage("map_id는 1이상의 자연수여야 합니다"),
     ],
     profile: [
-        body("title").trim().not().isEmpty().withMessage("title이 없습니다."),
-        body("description").trim(),
+        query("mapId")
+            .not()
+            .isEmpty()
+            .withMessage("mapId가 없습니다.")
+            .isInt({ min: 1 })
+            .withMessage("mapId는 1이상의 자연수여야 합니다.")
+            .optional(),
+        body("mapId")
+            .not()
+            .isEmpty()
+            .withMessage("mapId가 없습니다.")
+            .isInt({ min: 1 })
+            .withMessage("mapId는 1이상의 자연수여야 합니다.")
+            .optional(),
+        body("title")
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage("title이 없습니다.")
+            .optional(),
+        body("description").trim().optional(),
     ],
 });
