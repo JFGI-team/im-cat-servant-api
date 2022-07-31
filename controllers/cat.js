@@ -2,9 +2,8 @@ const objectCat = require("../models/modelObjectCat");
 const url = require("url");
 
 exports.getRandomCat = async function (req, res, next) {
-    const queryData = url.parse(req.url, true).query;
     const catMappingList = await objectCat.getCatMappingListByMapId(
-        queryData.mapId,
+        req.query.mapId,
     );
 
     let myCat = 0;
@@ -12,7 +11,7 @@ exports.getRandomCat = async function (req, res, next) {
         if (!catMapping.map_id) return true;
         else myCat = myCat + 1;
     });
-    if (myCat === 3) {
+    if (myCat >= 3) {
         return res.status(400).json({
             message: "Already picked three cats",
         });

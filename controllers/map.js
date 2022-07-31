@@ -7,10 +7,9 @@ const description = require("../middleware/decryptionToken");
 
 exports.saveMapData = async function (req, res, next) {
     const decode = await description.verifyToken(req.headers.authorization);
-    const userId = decode.userNo;
     const mapId = await map.insertMap(
         null,
-        userId,
+        decode.userNo,
         req.body.wallpaperId,
         req.body.floorId,
         req.body.title,

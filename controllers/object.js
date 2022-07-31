@@ -2,8 +2,7 @@ const object = require("../models/modelObject");
 const url = require("url");
 
 exports.getColorAndDirection = async function (req, res, next) {
-    const queryData = url.parse(req.url, true).query;
-    const objectInfo = await object.getColorAndDirection(queryData.objectId);
+    const objectInfo = await object.getColorAndDirection(req.query.objectId);
 
     res.json({
         objectId: objectInfo.object_id,
@@ -13,29 +12,28 @@ exports.getColorAndDirection = async function (req, res, next) {
 };
 
 exports.getObjectIdList = async function (req, res, next) {
-    const queryData = url.parse(req.url, true).query;
     const objectIdStr = await object.getObjectListBySearchAndCategory(
-        queryData.searchKeyword,
-        queryData.category,
+        req.query.searchKeyword,
+        req.query.category,
     );
     const objectListObj = new Object({
         totalCount: 0,
         objects: [],
         index: 0,
-        limit: queryData.limit,
+        limit: req.query.limit,
     });
     if (objectIdStr.object_id) {
         objectListObj.objects = objectIdStr.object_id.split(",");
         objectListObj.totalCount = objectListObj.objects.length;
         objectListObj.index = objectListObj.objects.indexOf(
-            queryData.lastMapId,
+            req.query.lastMapId,
         );
     } else {
         return res.status(400).json({
             error: "검색 결과가 존재하지 않습니다.",
         });
     }
-    if (!Number(queryData.lastMapId) || objectListObj.index !== -1) {
+    if (!Number(req.query.lastMapId) || objectListObj.index !== -1) {
         objectListObj.objects = objectListObj.objects.slice(
             objectListObj.index + 1,
             objectListObj.index + 1 + Number(objectListObj.limit),
