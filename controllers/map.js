@@ -3,14 +3,17 @@ const maps = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
+const description = require("../middleware/decryptionToken");
 
 exports.saveMapData = async function (req, res, next) {
-    const mapId = await maps.insertMap(
+    const decode = await description.verifyToken(req.headers.authorization);
+    const mapId = await map.insertMap(
         null,
-        1, //userID인데 헤더에 포함되서 오는거라서 일단은 임의로 지정
+        decode.userNo,
         req.body.wallpaperId,
         req.body.floorId,
         req.body.title,
+        req.body.description,
     );
 
     req.body.objects.forEach(async function (object) {
@@ -25,8 +28,8 @@ exports.saveMapData = async function (req, res, next) {
         objectMapping.insertMapObjectMapping(
             mapId.insertId,
             object.id,
-            colorId[0].object_color_id,
-            directionId[0].object_direction_id,
+            colorId.object_color_id,
+            directionId.object_direction_id,
             object.xLocation,
             object.yLocation,
             object.link,

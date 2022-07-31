@@ -68,7 +68,7 @@ exports.getObjectListBySearchAndCategory = async function (
     });
 };
 
-exports.getObejctListByIdList = async function (objectIdList) {
+exports.getObjectListByIdList = async function (objectIdList) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT 
