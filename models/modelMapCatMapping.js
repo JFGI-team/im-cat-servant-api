@@ -46,3 +46,22 @@ exports.getCatListByMapId = async function (map_id) {
         }
     });
 };
+
+exports.setCatHeadByMapIdAndCatId = async function (mapId, catId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            UPDATE
+	            map_cat_mapping
+            SET
+	            is_main = true
+            WHERE
+	            map_id = ?
+	            AND 
+	            object_cat_id = ?
+        `;
+        db.query(query, [mapId, catId], function (err, result) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+};
