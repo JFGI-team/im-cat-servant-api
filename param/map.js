@@ -83,27 +83,26 @@ module.exports = defineParam({
             .isInt({ min: 1 })
             .withMessage("map_id는 1이상의 자연수여야 합니다"),
     ],
-    profile: [
+    profileGet: [
         query("mapId")
             .not()
             .isEmpty()
             .withMessage("mapId가 없습니다.")
             .isInt({ min: 1 })
-            .withMessage("mapId는 1이상의 자연수여야 합니다.")
-            .optional(),
+            .withMessage("mapId는 1이상의 자연수여야 합니다."),
+    ],
+    profileUpdate: [
         body("mapId")
             .not()
             .isEmpty()
             .withMessage("mapId가 없습니다.")
             .isInt({ min: 1 })
-            .withMessage("mapId는 1이상의 자연수여야 합니다.")
-            .optional(),
-        body("title")
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage("title이 없습니다.")
-            .optional(),
-        body("description").trim().optional(),
+            .withMessage("mapId는 1이상의 자연수여야 합니다."),
+        body("title").trim().not().isEmpty().withMessage("title이 없습니다."),
+        body("description").trim(),
+    ],
+    profileInsert: [
+        body("title").trim().not().isEmpty().withMessage("title이 없습니다."),
+        body("description").trim(),
     ],
 });

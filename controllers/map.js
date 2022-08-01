@@ -7,7 +7,7 @@ const description = require("../middleware/decryptionToken");
 
 exports.saveMapData = async function (req, res, next) {
     const decode = await description.verifyToken(req.headers.authorization);
-    const mapId = await map.insertMap(
+    const mapId = await maps.insertMap(
         null,
         decode.userNo,
         req.body.wallpaperId,
@@ -119,12 +119,16 @@ exports.saveProfile = async function (req, res, next) {
 };
 
 exports.updateProfile = async function (req, res, next) {
-    const profile = await maps.getProfileByMapId(req.body.mapId);
-    if (!profile) {
+    const decode = await description.verifyToken(req.headers.authorization);
+    const map = await maps.getMapByMapId(req.body.mapId);
+
+    if (!map) {
         return res.status(400).json({
             error: "존재하지 않는 프로필에 대한 Update요청입니다.",
         });
     }
+    if (map.user_id !== decode.userNo)
+        return res.status(400).json({ error: "프로필 Update 권한이 없습니다" });
 
     maps.updateProfileByMapId(
         req.body.mapId,
@@ -138,7 +142,11 @@ exports.updateProfile = async function (req, res, next) {
 };
 
 exports.getProfile = async function (req, res, next) {
-    const profile = await maps.getProfileByMapId(req.query.mapId);
+    const decode = await description.verifyToken(req.headers.authorization);
+    const profile = await maps.getProfileByMapIdAndUserId(
+        req.query.mapId,
+        decode.userNo,
+    );
     if (!profile) {
         return res.status(400).json({
             error: "존재하지 않는 프로필에 대한 get요청입니다.",

@@ -36,7 +36,7 @@ exports.getMapByMapId = async function (mapId) {
                 INNER JOIN user u ON (u.user_id = m.user_id)
             WHERE
                 m.map_id = ? 
-                
+    
         `;
         db.query(query, [mapId], function (err, result) {
             try {
@@ -66,18 +66,20 @@ exports.updateProfileByMapId = async function (mapId, title, description) {
     });
 };
 
-exports.getProfileByMapId = async function (mapId) {
+exports.getProfileByMapIdAndUserId = async function (mapId, userId) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT
-                m.title, m.description, u.nickname
+                m.title, m.description, u.nickname,
             FROM
                 map AS m
-            INNER JOIN user AS u ON (m.user_id = u.user_id) 
+                INNER JOIN user AS u ON (m.user_id = u.user_id) 
             WHERE 
-                map_id = ?
+                m.map_id = ?
+                AND
+                u.user_id = ?
         `;
-        db.query(query, [mapId], function (err, result) {
+        db.query(query, [mapId, userId], function (err, result) {
             if (!err) resolve(result[0]);
             else reject(err);
         });
