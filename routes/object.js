@@ -6,5 +6,5 @@ const objectParam = require("../param/object");
 
 router.get("/", objectParam.index, objectController.getColorAndDirection);
 router.get("/list", objectParam.list, objectController.getObjectIdList);
-router.get("/cat", catController.getRandomCat);
+router.get("/cat", objectParam.cat, catController.getRandomCat);
 module.exports = router;
