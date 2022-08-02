@@ -124,11 +124,11 @@ exports.updateProfile = async function (req, res, next) {
 
     if (!map) {
         return res.status(400).json({
-            error: "존재하지 않는 프로필에 대한 Update요청입니다.",
+            error: "NOT_FOUND_PROFILE",
         });
     }
     if (map.user_id !== decode.userNo)
-        return res.status(400).json({ error: "프로필 Update 권한이 없습니다" });
+        return res.status(400).json({ error: "NO_PERMISSION" });
 
     maps.updateProfileByMapId(
         req.body.mapId,
@@ -137,7 +137,7 @@ exports.updateProfile = async function (req, res, next) {
     );
 
     res.status(200).json({
-        message: `Update Profile Success`,
+        message: `UPDATE_SUCCESS`,
     });
 };
 
@@ -149,7 +149,7 @@ exports.getProfile = async function (req, res, next) {
     );
     if (!profile) {
         return res.status(400).json({
-            error: "존재하지 않는 프로필에 대한 get요청입니다.",
+            error: "NOT_FOUND",
         });
     }
 

@@ -7,11 +7,11 @@ exports.getRandomCat = async function (req, res, next) {
     const map = await maps.getMapByMapId(req.query.mapId);
     if (!map) {
         return res.status(400).json({
-            error: "유효하지 않는 mapId입니다",
+            error: "NOT_FOUND_MAP",
         });
     }
     if (map.user_id !== decode.userNo)
-        return res.status(400).json({ error: "고양이 뽑기 권한이 없습니다" });
+        return res.status(400).json({ error: "NO_PERMISSION" });
 
     const catMappingList = await objectCat.getCatMappingListByMapId(
         req.query.mapId,
@@ -24,7 +24,7 @@ exports.getRandomCat = async function (req, res, next) {
     });
     if (myCat >= 3) {
         return res.status(400).json({
-            message: "이미 고양이를 3마리 뽑았습니다",
+            message: "ALL_PICKED",
         });
     }
 
