@@ -15,7 +15,7 @@ exports.getRandomCat = async function (req, res, next) {
     });
     if (myCat >= 3) {
         return res.status(400).json({
-            message: "이미 3마리의 고양이를 모두 뽑았습니다",
+            message: "ALL_PICKED",
         });
     }
 
@@ -30,22 +30,18 @@ exports.setCatHead = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
     const map = await maps.getMapByMapId(req.body.mapId);
     if (map.user_id !== decode.userNo)
-        return res
-            .status(400)
-            .json({ error: "대표고양이 설정 권한이 없습니다" });
+        return res.status(400).json({ error: "NO_PERMISSION" });
 
     const catIsMainList = await catMapping.getCatIsMainListByMapId(
         req.body.mapId,
     );
     if (catIsMainList.length === 0)
-        return res.status(400).json({ error: "맵에 배치된 고양이가 없습니다" });
+        return res.status(400).json({ error: "NOT_FOUND_CAT" });
 
     catIsMainList.map(async function (cat) {
         if (cat.is_main === 1) {
             if (cat.object_cat_id === req.body.catId)
-                return res
-                    .status(400)
-                    .json({ message: "이미 대표고양로 설정 되어있습니다" });
+                return res.status(400).json({ message: "ALREADY_SET_HEAD" });
             else
                 catMapping.setCatHeadByMapIdAndCatId(
                     cat.map_id,
@@ -60,7 +56,7 @@ exports.setCatHead = async function (req, res, next) {
                     true,
                 );
                 return res.status(200).json({
-                    message: "대표고양이 설정이 완료됐습니다.",
+                    message: "SET_HEAD_SUCCESS",
                 });
             }
         }
@@ -72,9 +68,7 @@ exports.getCatList = async function (req, res, next) {
     const map = await maps.getMapByMapId(req.query.mapId);
     const cats = [];
     if (map.user_id !== decode.userNo)
-        return res
-            .status(400)
-            .json({ error: "고양이 목록 조회 권한이 없습니다" });
+        return res.status(400).json({ error: "NO_PERMISSION" });
 
     const catList = await catMapping.getCatIsMainListByMapId(req.query.mapId);
     catList.map(function (cat) {
