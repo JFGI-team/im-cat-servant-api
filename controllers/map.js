@@ -3,10 +3,10 @@ const maps = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
-const description = require("../middleware/decryptionToken");
+const decryption = require("../middleware/decryptionToken");
 
 exports.saveMapData = async function (req, res, next) {
-    const decode = await description.verifyToken(req.headers.authorization);
+    const decode = await decryption.verifyToken(req.headers.authorization);
     const mapId = await map.insertMap(
         null,
         decode.userNo,

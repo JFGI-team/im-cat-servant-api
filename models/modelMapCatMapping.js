@@ -47,19 +47,37 @@ exports.getCatListByMapId = async function (map_id) {
     });
 };
 
-exports.setCatHeadByMapIdAndCatId = async function (mapId, catId) {
+exports.setCatHeadByMapIdAndCatId = async function (mapId, catId, isMain) {
     return new Promise(function (resolve, reject) {
         query = `
             UPDATE
 	            map_cat_mapping
             SET
-	            is_main = true
+	            is_main = ?
             WHERE
 	            map_id = ?
 	            AND 
 	            object_cat_id = ?
         `;
-        db.query(query, [mapId, catId], function (err, result) {
+        db.query(query, [isMain, mapId, catId], function (err, result) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+};
+
+exports.getCatIsMainListByMapId = async function (mapId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+        SELECT 
+            oc.object_cat_id, oc.image_url, mcm.map_id, mcm.name, mcm.is_main
+        FROM 
+            map_cat_mapping AS mcm
+            INNER JOIN object_cat AS oc ON(mcm.object_cat_id = oc.object_cat_id)
+        WHERE
+            mcm.map_id = ?
+        `;
+        db.query(query, [mapId], function (err, result) {
             if (err) reject(err);
             resolve(result);
         });
