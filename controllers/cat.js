@@ -1,7 +1,18 @@
 const objectCat = require("../models/modelObjectCat");
-const url = require("url");
+const maps = require("../models/modelMap");
+const decryption = require("../middleware/decryptionToken");
 
 exports.getRandomCat = async function (req, res, next) {
+    const decode = await decryption.verifyToken(req.headers.authorization);
+    const map = await maps.getMapByMapId(req.query.mapId);
+    if (!map) {
+        return res.status(400).json({
+            error: "NOT_FOUND_MAP",
+        });
+    }
+    if (map.user_id !== decode.userNo)
+        return res.status(400).json({ error: "NO_PERMISSION" });
+
     const catMappingList = await objectCat.getCatMappingListByMapId(
         req.query.mapId,
     );
@@ -13,7 +24,7 @@ exports.getRandomCat = async function (req, res, next) {
     });
     if (myCat >= 3) {
         return res.status(400).json({
-            message: "Already picked three cats",
+            message: "ALL_PICKED",
         });
     }
 

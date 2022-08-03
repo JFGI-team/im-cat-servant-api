@@ -3,11 +3,11 @@ const maps = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
-const description = require("../middleware/decryptionToken");
+const decryption = require("../middleware/decryptionToken");
 
 exports.saveMapData = async function (req, res, next) {
-    const decode = await description.verifyToken(req.headers.authorization);
-    const mapId = await map.insertMap(
+    const decode = await decryption.verifyToken(req.headers.authorization);
+    const mapId = await maps.insertMap(
         null,
         decode.userNo,
         req.body.wallpaperId,
@@ -100,4 +100,62 @@ exports.getMapAllObject = async function (req, res, next) {
     } catch (err) {
         res.status(400).send(err);
     }
+};
+
+exports.saveProfile = async function (req, res, next) {
+    const decode = await decryption.verifyToken(req.headers.authorization);
+    const mapId = await maps.insertMap(
+        null,
+        decode.userNo,
+        null,
+        null,
+        req.body.title,
+        req.body.description,
+    );
+
+    res.json({
+        mapId: mapId.insertId,
+    });
+};
+
+exports.updateProfile = async function (req, res, next) {
+    const decode = await decryption.verifyToken(req.headers.authorization);
+    const map = await maps.getMapByMapId(req.body.mapId);
+
+    if (!map) {
+        return res.status(400).json({
+            error: "NOT_FOUND_PROFILE",
+        });
+    }
+    if (map.user_id !== decode.userNo)
+        return res.status(400).json({ error: "NO_PERMISSION" });
+
+    maps.updateProfileByMapId(
+        req.body.mapId,
+        req.body.title,
+        req.body.description,
+    );
+
+    res.status(200).json({
+        message: `UPDATE_SUCCESS`,
+    });
+};
+
+exports.getProfile = async function (req, res, next) {
+    const decode = await decryption.verifyToken(req.headers.authorization);
+    const profile = await maps.getProfileByMapIdAndUserId(
+        req.query.mapId,
+        decode.userNo,
+    );
+    if (!profile) {
+        return res.status(400).json({
+            error: "NOT_FOUND",
+        });
+    }
+
+    res.json({
+        nickname: profile.nickname,
+        title: profile.title,
+        description: profile.description,
+    });
 };
