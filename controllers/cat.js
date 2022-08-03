@@ -29,6 +29,7 @@ exports.getRandomCat = async function (req, res, next) {
 exports.setCatHead = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
     const map = await maps.getMapByMapId(req.body.mapId);
+    if (!map) return res.status(400).json({ error: "NOT_FOUND_MAP" });
     if (map.user_id !== decode.userNo)
         return res.status(400).json({ error: "NO_PERMISSION" });
 

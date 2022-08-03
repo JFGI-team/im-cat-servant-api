@@ -55,9 +55,7 @@ exports.setCatHeadByMapIdAndCatId = async function (mapId, catId, isMain) {
             SET
 	            is_main = ?
             WHERE
-	            map_id = ?
-	            AND 
-	            object_cat_id = ?
+	            map_id = ? AND object_cat_id = ?
         `;
         db.query(query, [isMain, mapId, catId], function (err, result) {
             if (err) reject(err);
