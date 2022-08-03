@@ -119,7 +119,7 @@ exports.saveProfile = async function (req, res, next) {
 };
 
 exports.updateProfile = async function (req, res, next) {
-    const decode = await description.verifyToken(req.headers.authorization);
+    const decode = await decryption.verifyToken(req.headers.authorization);
     const map = await maps.getMapByMapId(req.body.mapId);
 
     if (!map) {
@@ -142,7 +142,7 @@ exports.updateProfile = async function (req, res, next) {
 };
 
 exports.getProfile = async function (req, res, next) {
-    const decode = await description.verifyToken(req.headers.authorization);
+    const decode = await decryption.verifyToken(req.headers.authorization);
     const profile = await maps.getProfileByMapIdAndUserId(
         req.query.mapId,
         decode.userNo,
