@@ -55,7 +55,8 @@ exports.setCatHeadByMapIdAndCatId = async function (mapId, catId, isMain) {
             SET
 	            is_main = ?
             WHERE
-	            map_id = ? AND object_cat_id = ?
+	            map_id = ? 
+                AND object_cat_id = ?
         `;
         db.query(query, [isMain, mapId, catId], function (err, result) {
             if (err) reject(err);
@@ -67,13 +68,14 @@ exports.setCatHeadByMapIdAndCatId = async function (mapId, catId, isMain) {
 exports.getCatIsMainListByMapId = async function (mapId) {
     return new Promise(function (resolve, reject) {
         query = `
-        SELECT 
-            oc.object_cat_id, oc.image_url, mcm.map_id, mcm.name, mcm.is_main
-        FROM 
-            map_cat_mapping AS mcm
-            INNER JOIN object_cat AS oc ON(mcm.object_cat_id = oc.object_cat_id)
-        WHERE
-            mcm.map_id = ?
+            SELECT 
+                oc.object_cat_id, oc.image_url, mcm.map_id, mcm.name, mcm.is_main, m.user_id
+            FROM 
+                map_cat_mapping AS mcm
+                INNER JOIN object_cat AS oc ON(mcm.object_cat_id = oc.object_cat_id)
+                INNER JOIN map AS m ON(mcm.map_id = m.map_id)
+            WHERE
+                mcm.map_id = ?
         `;
         db.query(query, [mapId], function (err, result) {
             if (err) reject(err);

@@ -28,19 +28,15 @@ exports.getRandomCat = async function (req, res, next) {
 
 exports.setCatHead = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
-    const map = await maps.getMapByMapId(req.body.mapId);
-    if (!map) return res.status(400).json({ error: "NOT_FOUND_MAP" });
-    if (map.user_id !== decode.userNo)
+    const catList = await catMapping.getCatIsMainListByMapId(req.body.mapId);
+
+    if (catList.length === 0)
+        return res.status(400).json({ error: "NOT_FOUND" });
+    if (catList[0].user_id !== decode.userNo)
         return res.status(400).json({ error: "NO_PERMISSION" });
 
-    const catIsMainList = await catMapping.getCatIsMainListByMapId(
-        req.body.mapId,
-    );
-    if (catIsMainList.length === 0)
-        return res.status(400).json({ error: "NOT_FOUND_CAT" });
-
-    catIsMainList.map(async function (cat) {
-        if (cat.is_main === 1) {
+    catList.map(async function (cat) {
+        if (cat.is_main === "T") {
             if (cat.object_cat_id === req.body.catId)
                 return res.status(400).json({ message: "ALREADY_SET_HEAD" });
             else
@@ -66,12 +62,12 @@ exports.setCatHead = async function (req, res, next) {
 
 exports.getCatList = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
-    const map = await maps.getMapByMapId(req.query.mapId);
+    const catList = await catMapping.getCatIsMainListByMapId(req.body.mapId);
     const cats = [];
-    if (map.user_id !== decode.userNo)
+
+    if (catList[0].user_id !== decode.userNo)
         return res.status(400).json({ error: "NO_PERMISSION" });
 
-    const catList = await catMapping.getCatIsMainListByMapId(req.query.mapId);
     catList.map(function (cat) {
         cats.push({
             catId: cat.object_cat_id,
