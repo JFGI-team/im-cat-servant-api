@@ -1,6 +1,5 @@
 const objectCat = require("../models/modelObjectCat");
 const catMapping = require("../models/modelMapCatMapping");
-const maps = require("../models/modelMap");
 const decryption = require("../middleware/decryptionToken");
 
 exports.getRandomCat = async function (req, res, next) {
