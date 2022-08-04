@@ -62,9 +62,13 @@ exports.setCatHead = async function (req, res, next) {
 
 exports.getCatList = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
-    const catList = await catMapping.getCatIsMainListByMapId(req.body.mapId);
+    const catList = await catMapping.getCatIsMainListByMapId(req.query.mapId);
     const cats = [];
 
+    if (catList.length === 0)
+        return res.json({
+            cats,
+        });
     if (catList[0].user_id !== decode.userNo)
         return res.status(400).json({ error: "NO_PERMISSION" });
 
