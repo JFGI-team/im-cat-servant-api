@@ -159,3 +159,11 @@ exports.getProfile = async function (req, res, next) {
         description: profile.description,
     });
 };
+
+exports.getUserMapList = async function (req, res, next) {
+    const decode = await decryption.verifyToken(req.headers.authorization);
+
+    res.json({
+        test: "test",
+    });
+};
