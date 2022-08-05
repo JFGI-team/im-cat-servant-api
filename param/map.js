@@ -105,4 +105,16 @@ module.exports = defineParam({
         body("title").trim().not().isEmpty().withMessage("title이 없습니다."),
         body("description").trim(),
     ],
+    list: [
+        query("searchKeyword").trim(),
+        query("limit")
+            .not()
+            .isEmpty()
+            .withMessage("limit이 없습니다")
+            .isInt({ min: 1 })
+            .withMessage("limit은 1이상의 정수여야 합니다"),
+        query("lastMapId")
+            .isInt({ min: 0 })
+            .withMessage("lastMapId는 0이상의 정수여야 합니다"),
+    ],
 });
