@@ -1,4 +1,4 @@
-const { query } = require("express-validator");
+const { body, query } = require("express-validator");
 const defineParam = require("../middleware/validateRequestParam");
 
 module.exports = defineParam({
@@ -30,5 +30,19 @@ module.exports = defineParam({
             .withMessage("mapId이 없습니다")
             .isInt({ min: 1 })
             .withMessage("mapId는 1이상의 정수여야 합니다"),
+    ],
+    catHead: [
+        body("catId")
+            .not()
+            .isEmpty()
+            .withMessage("catId가 없습니다")
+            .isInt({ min: 1 })
+            .withMessage("catId는 1 이상의 정수여야 합니다"),
+        body("mapId")
+            .not()
+            .isEmpty()
+            .withMessage("catId가 없습니다")
+            .isInt({ min: 1 })
+            .withMessage("catId는 1 이상의 정수여야 합니다"),
     ],
 });
