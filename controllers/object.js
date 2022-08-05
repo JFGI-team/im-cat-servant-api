@@ -30,7 +30,7 @@ exports.getObjectIdList = async function (req, res, next) {
         );
     } else {
         return res.status(400).json({
-            error: "검색 결과가 존재하지 않습니다.",
+            error: "NOT_FOUND_SEARCH_RESULT",
         });
     }
     if (!Number(req.query.lastMapId) || objectListObj.index !== -1) {
@@ -40,7 +40,7 @@ exports.getObjectIdList = async function (req, res, next) {
         );
     } else {
         return res.status(400).json({
-            error: "유효하지 않는 lastMapId 값입니다.",
+            error: "INVALID_LAST_MAP_ID",
         });
     }
     if (objectListObj.objects.length) {
