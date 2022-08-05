@@ -191,9 +191,7 @@ exports.getUserMapList = async function (req, res, next) {
     }
 
     if (mapListObject.maps.length) {
-        mapListObject.maps = await maps.getUserMapListByIdList(
-            mapListObject.maps,
-        );
+        mapListObject.maps = await maps.getMapListByIdList(mapListObject.maps);
     }
 
     res.json({

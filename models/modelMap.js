@@ -101,7 +101,7 @@ exports.getUserMapStrByUserId = async function (userId) {
     });
 };
 
-exports.getUserMapListByIdList = async function (mapIdList) {
+exports.getMapListByIdList = async function (mapIdList) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT
