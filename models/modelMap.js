@@ -105,7 +105,7 @@ exports.getMapListByIdList = async function (mapIdList) {
     return new Promise(function (resolve, reject) {
         query = `
             SELECT
-                m.map_id, m.user_id, m.title, u.nickname, mp.image_url
+                m.map_id AS mapId, m.user_id AS userId, m.title, u.nickname, mp.image_url AS previewImageUrl
             FROM
                 map AS m
                 INNER JOIN map_preview AS mp ON(m.map_id = mp.map_id)
