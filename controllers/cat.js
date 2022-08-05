@@ -1,6 +1,7 @@
 const objectCat = require("../models/modelObjectCat");
 const catMapping = require("../models/modelMapCatMapping");
 const decryption = require("../middleware/decryptionToken");
+const maps = require("../models/modelMap");
 
 exports.getRandomCat = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
