@@ -16,38 +16,46 @@ exports.getObjectIdList = async function (req, res, next) {
         req.query.searchKeyword,
         req.query.category,
     );
+    const limit = Number(req.query.limit);
     const objectListObj = new Object({
         totalCount: 0,
         objects: [],
-        index: 0,
-        limit: req.query.limit,
     });
     if (objectIdStr.object_id) {
         objectListObj.objects = objectIdStr.object_id.split(",");
         objectListObj.totalCount = objectListObj.objects.length;
-        objectListObj.index = objectListObj.objects.indexOf(
-            req.query.lastMapId,
-        );
     } else {
         return res.status(400).json({
-            error: "검색 결과가 존재하지 않습니다.",
+            error: "NOT_FOUND_SEARCH_RESULT",
         });
     }
-    if (!Number(req.query.lastMapId) || objectListObj.index !== -1) {
-        objectListObj.objects = objectListObj.objects.slice(
-            objectListObj.index + 1,
-            objectListObj.index + 1 + Number(objectListObj.limit),
-        );
-    } else {
-        return res.status(400).json({
-            error: "유효하지 않는 lastMapId 값입니다.",
-        });
-    }
+    if (Number(req.query.lastMapId)) {
+        index = objectListObj.objects.indexOf(req.query.lastMapId);
+        if (index !== -1) {
+            objectListObj.objects = objectListObj.objects.slice(
+                index + 1,
+                index + 1 + limit,
+            );
+        } else {
+            return res.status(400).json({
+                error: "INVALID_LAST_MAP_ID",
+            });
+        }
+    } else objectListObj.objects = objectListObj.objects.slice(0, limit);
+
     if (objectListObj.objects.length) {
         objectListObj.objects = await object.getObjectListByIdList(
             objectListObj.objects,
         );
     }
+
+    objectListObj.objects.map(function (object, i) {
+        objectListObj.objects[i] = {
+            objectId: object.object_id,
+            imageUrl: object.image_url,
+            name: object.name,
+        };
+    });
 
     res.json({
         totalCount: objectListObj.totalCount,

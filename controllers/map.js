@@ -16,7 +16,7 @@ exports.saveMapData = async function (req, res, next) {
         req.body.description,
     );
 
-    req.body.objects.forEach(async function (object) {
+    req.body.maps.forEach(async function (object) {
         const colorId = await objectColor.getObjectColorId(
             object.id,
             object.color,
@@ -53,7 +53,7 @@ exports.saveMapData = async function (req, res, next) {
 
 exports.getMapAllObject = async function (req, res, next) {
     try {
-        const objects = [];
+        const maps = [];
         const cats = [];
 
         const mapInfo = await maps.getMapByMapId(req.params.map_id);
@@ -72,7 +72,7 @@ exports.getMapAllObject = async function (req, res, next) {
                 yLocation: objectRow.y_location,
                 link: objectRow.link,
             };
-            objects.push(objectDetail);
+            maps.push(objectDetail);
         });
 
         mapCat.map(function (catRow) {
@@ -93,7 +93,7 @@ exports.getMapAllObject = async function (req, res, next) {
             title: mapInfo.title,
             mapId: mapInfo.map_id,
             cats: cats,
-            objects: objects,
+            maps: maps,
         };
 
         res.status(200).send(mapDetail);
@@ -157,5 +157,57 @@ exports.getProfile = async function (req, res, next) {
         nickname: profile.nickname,
         title: profile.title,
         description: profile.description,
+    });
+};
+
+exports.getUserMapList = async function (req, res, next) {
+    const decode = await decryption.verifyToken(req.headers.authorization);
+    const userMapStr = await maps.getUserMapStrByUserId(decode.userNo);
+    const limit = req.query.limit;
+    const mapListObject = new Object({
+        totalCount: 0,
+        maps: [],
+    });
+
+    if (userMapStr.mapId) {
+        mapListObject.maps = userMapStr.mapId.split(",");
+        mapListObject.totalCount = mapListObject.maps.length;
+    } else {
+        return res.status(400).json({
+            error: "NOT_FOUND_MAP",
+        });
+    }
+
+    if (Number(req.query.lastMapId)) {
+        const index = mapListObject.maps.indexOf(req.query.lastMapId);
+        if (index !== -1) {
+            mapListObject.maps = mapListObject.maps.slice(
+                index + 1,
+                index + 1 + limit,
+            );
+        } else {
+            return res.status(400).json({
+                error: "INVALID_LAST_MAP_ID",
+            });
+        }
+    } else mapListObject.maps = mapListObject.maps.slice(0, limit);
+
+    if (mapListObject.maps.length) {
+        mapListObject.maps = await maps.getMapListByIdList(mapListObject.maps);
+    }
+
+    mapListObject.maps.map(function (map, i) {
+        mapListObject.maps[i] = {
+            mapId: map.map_id,
+            title: map.title,
+            userId: map.user_id,
+            nickname: map.nickname,
+            previewImageUrl: map.image_url,
+        };
+    });
+
+    res.json({
+        totalCount: mapListObject.totalCount,
+        maps: mapListObject.maps,
     });
 };
