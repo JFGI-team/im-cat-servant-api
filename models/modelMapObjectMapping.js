@@ -58,3 +58,18 @@ exports.getObjectListByMapId = async function (map_id) {
         }
     });
 };
+
+exports.deleteMapObjectMapping = async function (mapId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            delete from
+                map_object_mapping
+            where
+                map_id = ?
+        `;
+        db.query(query, [mapId], function (err, result) {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+};

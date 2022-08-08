@@ -3,7 +3,7 @@ const maps = require("../models/modelMap");
 const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
-
+const Token = require("../middleware/decryptionToken.js");
 exports.saveMapData = async function (req, res, next) {
     const mapId = await maps.insertMap(
         null,
@@ -11,6 +11,7 @@ exports.saveMapData = async function (req, res, next) {
         req.body.wallpaperId,
         req.body.floorId,
         req.body.title,
+        req.body.description,
     );
 
     req.body.objects.forEach(async function (object) {
@@ -96,5 +97,62 @@ exports.getMapAllObject = async function (req, res, next) {
         res.status(200).send(mapDetail);
     } catch (err) {
         res.status(400).send(err);
+    }
+};
+
+exports.updateMapData = async function (req, res, next) {
+    try {
+        const tokenInfo = await Token.verifyToken(req.header("token"));
+
+        await maps.deleteMap(req.body.mapId);
+
+        req.body.objects.forEach(async function (object) {
+            await catMapping.deleteCatMapping(object.map_id);
+            await objectMapping.deleteMapObjectMapping(object.map_id);
+        });
+
+        const mapId = await maps.insertMap(
+            req.body.mapId,
+            tokenInfo.userNo.toString(),
+            req.body.wallpaperId,
+            req.body.floorId,
+            req.body.title,
+            req.body.description,
+        );
+        req.body.objects.forEach(async function (object) {
+            const colorId = await objectColor.getObjectColorId(
+                object.id,
+                object.color,
+            );
+            const directionId = await objectDirection.getObjectDirectionId(
+                object.id,
+                object.direction,
+            );
+
+            await objectMapping.insertMapObjectMapping(
+                req.body.mapId,
+                object.id,
+                colorId[0].object_color_id,
+                directionId[0].object_direction_id,
+                object.xLocation,
+                object.yLocation,
+                object.link,
+            );
+        });
+
+        await req.body.cats.forEach(async function (cat) {
+            catMapping.insertMapCatMapping(
+                cat.id,
+                req.body.mapId,
+                cat.name,
+                cat.x_location,
+                cat.y_location,
+                cat.is_main,
+            );
+        });
+
+        res.status(200).json({ msg: "수정했습니다" });
+    } catch (err) {
+        res.status(400).json(err);
     }
 };

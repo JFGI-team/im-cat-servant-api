@@ -18,3 +18,20 @@ exports.getObjectDirectionId = async function (objectId, direction) {
         });
     });
 };
+
+exports.deleteObjectDirectionId = async function (object_direction_id) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            DELETE 
+                object_direction_id, object_id, direction
+            FROM 
+                object_direction
+            WHERE
+                object_direction_id = ?
+        `;
+        db.query(query, [object_direction_id], function (err, result) {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+};

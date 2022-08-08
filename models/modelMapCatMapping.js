@@ -6,17 +6,18 @@ exports.insertMapCatMapping = async function (
     name,
     xLocation,
     yLocation,
+    isMain,
 ) {
     return new Promise(function (resolve, reject) {
         query = `
             INSERT INTO
                 map_cat_mapping
             VALUES
-                (?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?)
         `;
         db.query(
             query,
-            [objectCatId, mapId, name, xLocation, yLocation],
+            [objectCatId, mapId, name, xLocation, yLocation, isMain],
             function (err, result) {
                 if (!err) resolve(result);
                 else reject(err);
@@ -44,5 +45,20 @@ exports.getCatListByMapId = async function (map_id) {
         } catch (err) {
             reject(err);
         }
+    });
+};
+
+exports.deleteCatMapping = async function (mapId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            delete from
+                map_cat_mapping
+            where
+                map_id = ?
+        `;
+        db.query(query, [mapId], function (err, result) {
+            if (err) reject(err);
+            else resolve();
+        });
     });
 };

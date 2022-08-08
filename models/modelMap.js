@@ -6,17 +6,18 @@ exports.insertMap = async function (
     wallPaperID,
     floorId,
     title,
+    description,
 ) {
     return new Promise(function (resolve, reject) {
         query = `
             INSERT INTO
                 map
             VALUES
-                (?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?)
         `;
         db.query(
             query,
-            [mapId, userId, wallPaperID, floorId, title],
+            [mapId, userId, wallPaperID, floorId, title, description],
             function (err, result) {
                 if (!err) resolve(result);
                 else reject(err);
@@ -44,5 +45,47 @@ exports.getMapByMapId = async function (mapId) {
                 console.log(err);
             }
         });
+    });
+};
+exports.deleteMap = async function (mapId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+        DELETE FROM   
+            map
+        WHERE
+            map_id = ?
+    `;
+        db.query(query, [mapId], function (err, result) {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+};
+
+exports.updateMap = async function (
+    userId,
+    wallpaperId,
+    floorId,
+    title,
+    description,
+) {
+    return new Promise(function (resolve, reject) {
+        query = `
+        INSERT INTO
+            map (user_id, wallpaper_id, floor_id, title, description)
+        select 
+            user_id, wallpaper_id, floor_id, title, description
+        from
+            map
+        where map_id = ?
+    `;
+        db.query(
+            query,
+            [userId, wallpaperId, floorId, title, description],
+            function (err, result) {
+                if (err) reject(err);
+                else resolve();
+            },
+        );
     });
 };
