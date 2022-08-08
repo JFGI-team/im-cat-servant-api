@@ -163,36 +163,48 @@ exports.getProfile = async function (req, res, next) {
 exports.getUserMapList = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
     const userMapStr = await maps.getUserMapStrByUserId(decode.userNo);
-
+    const limit = req.query.limit;
     const mapListObject = new Object({
         totalCount: 0,
         maps: [],
-        index: 0,
-        limit: req.query.limit,
     });
+
     if (userMapStr.mapId) {
         mapListObject.maps = userMapStr.mapId.split(",");
         mapListObject.totalCount = mapListObject.maps.length;
-        mapListObject.index = mapListObject.maps.indexOf(req.query.lastMapId);
     } else {
         return res.status(400).json({
             error: "NOT_FOUND_MAP",
         });
     }
-    if (!Number(req.query.lastMapId) || mapListObject.index !== -1) {
-        mapListObject.maps = mapListObject.maps.slice(
-            mapListObject.index + 1,
-            mapListObject.index + 1 + Number(mapListObject.limit),
-        );
-    } else {
-        return res.status(400).json({
-            error: "INVALID_LAST_MAP_ID",
-        });
-    }
+
+    if (Number(req.query.lastMapId)) {
+        const index = mapListObject.maps.indexOf(req.query.lastMapId);
+        if (index !== -1) {
+            mapListObject.maps = mapListObject.maps.slice(
+                index + 1,
+                index + 1 + limit,
+            );
+        } else {
+            return res.status(400).json({
+                error: "INVALID_LAST_MAP_ID",
+            });
+        }
+    } else mapListObject.maps = mapListObject.maps.slice(0, limit);
 
     if (mapListObject.maps.length) {
         mapListObject.maps = await maps.getMapListByIdList(mapListObject.maps);
     }
+
+    mapListObject.maps.map(function (map, i) {
+        mapListObject.maps[i] = {
+            mapId: map.map_id,
+            title: map.title,
+            userId: map.user_id,
+            nickname: map.nickname,
+            previewImageUrl: map.image_url,
+        };
+    });
 
     res.json({
         totalCount: mapListObject.totalCount,
