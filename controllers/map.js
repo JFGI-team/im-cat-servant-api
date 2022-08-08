@@ -162,37 +162,38 @@ exports.getProfile = async function (req, res, next) {
 
 exports.getALLMapList = async function (req, res, next) {
     const allMapStr = await maps.getAllMapStrBySearch(req.query.searchKeyword);
+    const limit = Number(req.query.limit);
     const mapListObject = new Object({
         totalCount: 0,
         maps: [],
-        index: 0,
-        limit: req.query.limit,
     });
 
     if (allMapStr.mapId) {
         mapListObject.maps = allMapStr.mapId.split(",");
         mapListObject.totalCount = mapListObject.maps.length;
-        mapListObject.index = mapListObject.maps.indexOf(req.query.lastMapId);
     } else {
         return res.status(400).json({
             error: "NOT_FOUND_SEARCH_RESULT",
         });
     }
-    if (!Number(req.query.lastMapId) || mapListObject.index !== -1) {
-        mapListObject.maps = mapListObject.maps.slice(
-            mapListObject.index + 1,
-            mapListObject.index + 1 + Number(mapListObject.limit),
-        );
-    } else {
-        return res.status(400).json({
-            error: "INVALID_LAST_MAP_ID",
-        });
-    }
+    if (Number(req.query.lastMapId)) {
+        const index = mapListObject.maps.indexOf(req.query.lastMapId);
+        if (index !== -1) {
+            mapListObject.maps = mapListObject.maps.slice(
+                index + 1,
+                index + 1 + limit,
+            );
+        } else {
+            return res.status(400).json({
+                error: "INVALID_LAST_MAP_ID",
+            });
+        }
+    } else mapListObject.maps = mapListObject.maps.slice(0, limit);
 
     if (mapListObject.maps.length) {
         mapListObject.maps = await maps.getMapListByIdList(mapListObject.maps);
     }
-    console.log(mapListObject.maps);
+
     res.json({
         totalCount: mapListObject.totalCount,
         maps: mapListObject.maps,

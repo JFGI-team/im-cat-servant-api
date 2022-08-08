@@ -114,7 +114,8 @@ module.exports = defineParam({
             .isInt({ min: 1 })
             .withMessage("limit은 1이상의 정수여야 합니다"),
         query("lastMapId")
-            .isInt({ min: 0 })
-            .withMessage("lastMapId는 0이상의 정수여야 합니다"),
+            .isInt({ min: 1 })
+            .withMessage("lastMapId는 1이상의 정수여야 합니다")
+            .optional(),
     ],
 });
