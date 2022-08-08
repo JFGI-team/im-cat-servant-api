@@ -29,9 +29,9 @@ exports.getObjectIdList = async function (req, res, next) {
             error: "NOT_FOUND_SEARCH_RESULT",
         });
     }
-    if (Number(req.query.lastMapId))
-        if (objectListObj.index !== -1) {
-            index = objectListObj.objects.indexOf(req.query.lastMapId);
+    if (Number(req.query.lastMapId)) {
+        index = objectListObj.objects.indexOf(req.query.lastMapId);
+        if (index !== -1) {
             objectListObj.objects = objectListObj.objects.slice(
                 index + 1,
                 index + 1 + limit,
@@ -41,13 +41,21 @@ exports.getObjectIdList = async function (req, res, next) {
                 error: "INVALID_LAST_MAP_ID",
             });
         }
-    else objectListObj.objects = objectListObj.objects.slice(0, limit);
+    } else objectListObj.objects = objectListObj.objects.slice(0, limit);
 
     if (objectListObj.objects.length) {
         objectListObj.objects = await object.getObjectListByIdList(
             objectListObj.objects,
         );
     }
+
+    objectListObj.objects.map(function (object, i) {
+        objectListObj.objects[i] = {
+            objectId: object.object_id,
+            imageUrl: object.image_url,
+            name: object.name,
+        };
+    });
 
     res.json({
         totalCount: objectListObj.totalCount,
