@@ -15,4 +15,7 @@ router.post("/join", user.join, (req, res) => {
 router.post("/login", user.login, (req, res) => {
     userController.verify(req, res);
 });
+
+router.get("/map/list", user.mapList, mapController.getUserMapList);
+
 module.exports = router;
