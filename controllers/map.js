@@ -173,7 +173,7 @@ exports.getALLMapList = async function (req, res, next) {
         mapListObject.totalCount = mapListObject.maps.length;
     } else {
         return res.status(400).json({
-            error: "NOT_FOUND_SEARCH_RESULT",
+            error: "NOT_FOUND_MAP",
         });
     }
     if (Number(req.query.lastMapId)) {
