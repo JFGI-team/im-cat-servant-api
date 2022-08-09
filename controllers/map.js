@@ -43,6 +43,7 @@ exports.saveMapData = async function (req, res, next) {
             cat.name,
             cat.x_location,
             cat.y_location,
+            cat.isMain,
         );
     });
 

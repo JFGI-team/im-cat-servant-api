@@ -6,17 +6,18 @@ exports.insertMapCatMapping = async function (
     name,
     xLocation,
     yLocation,
+    isMain,
 ) {
     return new Promise(function (resolve, reject) {
         query = `
             INSERT INTO
                 map_cat_mapping
             VALUES
-                (?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?)
         `;
         db.query(
             query,
-            [objectCatId, mapId, name, xLocation, yLocation],
+            [objectCatId, mapId, name, xLocation, yLocation, isMain],
             function (err, result) {
                 if (!err) resolve(result);
                 else reject(err);
