@@ -84,6 +84,42 @@ exports.getProfileByMapIdAndUserId = async function (mapId, userId) {
     });
 };
 
+exports.getUserMapStrByUserId = async function (userId) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            SELECT
+                GROUP_CONCAT(map_id ORDER BY map_id) AS mapId
+            FROM
+                map
+            WHERE 
+                user_id = ?
+        `;
+        db.query(query, [userId], function (err, result) {
+            if (!err) resolve(result[0]);
+            else reject(err);
+        });
+    });
+};
+
+exports.getMapListByIdList = async function (mapIdList) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            SELECT
+                m.map_id, m.user_id , m.title, u.nickname, mp.image_url
+            FROM
+                map AS m
+                INNER JOIN map_preview AS mp ON(m.map_id = mp.map_id)
+                INNER JOIN user AS u ON(m.user_id = u.user_id)
+            WHERE
+                m.map_id IN (?)
+        `;
+        db.query(query, [mapIdList], function (err, result) {
+            if (!err) resolve(result);
+            else reject(err);
+        });
+    });
+};
+
 exports.getAllMapStrBySearch = async function (searchKeyword) {
     return new Promise(function (resolve, reject) {
         let searchWhere = "";
