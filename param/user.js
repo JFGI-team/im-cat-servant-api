@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
 const defineUser = require("../middleware/validateRequestParam");
 
 module.exports = defineUser({
