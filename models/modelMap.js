@@ -108,19 +108,19 @@ exports.getAllMapStrBySearch = async function (searchKeyword) {
 exports.getMapListAndCatByIdList = async function (mapIdList) {
     return new Promise(function (resolve, reject) {
         query = `
-        SELECT
-            m.map_id, m.user_id, m.title, m.description, u.nickname, mp.image_url AS mapPreviewImage, mcm.object_cat_id, oc.image_url AS catImage
-        FROM
-            map AS m
-            INNER JOIN user AS u ON(m.user_id = u.user_id)
-            INNER JOIN map_preview AS mp ON(m.map_id = mp.map_id)
-            INNER JOIN map_cat_mapping AS mcm ON(m.map_id = mcm.map_id)
-            INNER JOIN object_cat AS oc ON(mcm.object_cat_id = oc.object_cat_id)
-        WHERE
-            mcm.is_main = "T" 
-            AND
-            m.map_id IN (?)
-        ORDER BY map_id
+            SELECT
+                m.map_id, m.user_id, m.title, m.description, u.nickname, mp.image_url AS mapPreviewImage, mcm.object_cat_id, oc.image_url AS catImage
+            FROM
+                map AS m
+                INNER JOIN user AS u ON(m.user_id = u.user_id)
+                INNER JOIN map_preview AS mp ON(m.map_id = mp.map_id)
+                INNER JOIN map_cat_mapping AS mcm ON(m.map_id = mcm.map_id)
+                INNER JOIN object_cat AS oc ON(mcm.object_cat_id = oc.object_cat_id)
+            WHERE
+                mcm.is_main = "T" 
+                AND
+                m.map_id IN (?)
+            ORDER BY map_id
         `;
         db.query(query, [mapIdList], function (err, result) {
             if (!err) resolve(result);
