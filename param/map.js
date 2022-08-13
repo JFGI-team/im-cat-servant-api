@@ -106,7 +106,7 @@ module.exports = defineParam({
         body("description").trim(),
     ],
     list: [
-        query("searchKeyword").trim(),
+        query("searchKeyword").trim().optional(),
         query("limit")
             .not()
             .isEmpty()
