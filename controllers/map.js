@@ -191,8 +191,23 @@ exports.getALLMapList = async function (req, res, next) {
     } else mapListObject.maps = mapListObject.maps.slice(0, limit);
 
     if (mapListObject.maps.length) {
-        mapListObject.maps = await maps.getMapListByIdList(mapListObject.maps);
+        mapListObject.maps = await maps.getMapListAndCatByIdList(
+            mapListObject.maps,
+        );
     }
+
+    mapListObject.maps.map(function (map, i) {
+        mapListObject.maps[i] = {
+            mapId: map.map_id,
+            title: map.title,
+            userId: map.user_id,
+            description: map.description,
+            nickname: map.nickname,
+            previewImageUrl: map.mapPreviewImage,
+            catId: map.cat_id,
+            catImageUrl: map.catImage,
+        };
+    });
 
     res.json({
         totalCount: mapListObject.totalCount,
