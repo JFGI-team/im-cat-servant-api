@@ -4,10 +4,12 @@ const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
 const Token = require("../middleware/decryptionToken.js");
+
 exports.saveMapData = async function (req, res, next) {
+    const tokenInfo = await Token.verifyToken(req.header("token"));
     const mapId = await maps.insertMap(
         null,
-        1, //userID인데 헤더에 포함되서 오는거라서 일단은 임의로 지정
+        tokenInfo.userNo.toString(), //userID인데 헤더에 포함되서 오는거라서 일단은 임의로 지정
         req.body.wallpaperId,
         req.body.floorId,
         req.body.title,
@@ -103,55 +105,39 @@ exports.getMapAllObject = async function (req, res, next) {
 exports.updateMapData = async function (req, res, next) {
     try {
         const tokenInfo = await Token.verifyToken(req.header("token"));
+        const chkMapUser = await maps.chkMapUser(req.body.mapId);
+        if (tokenInfo.userNo == chkMapUser[0].user_id) {
+            await catMapping.deleteCatMapping(req.body.mapId);
+            await objectMapping.deleteMapObjectMapping(req.body.mapId);
 
-        await maps.deleteMap(req.body.mapId);
+            await req.body.objects.forEach(async function (object) {
+                console.log(object);
+                objectMapping.insertMapObjectMapping(
+                    req.body.mapId,
+                    object.id,
+                    object.objectColorId,
+                    object.objectDirectionId,
+                    object.xLocation,
+                    object.yLocation,
+                    object.link,
+                );
+            });
 
-        req.body.objects.forEach(async function (object) {
-            await catMapping.deleteCatMapping(object.map_id);
-            await objectMapping.deleteMapObjectMapping(object.map_id);
-        });
+            await req.body.cats.forEach(async function (cat) {
+                catMapping.insertMapCatMapping(
+                    cat.id,
+                    req.body.mapId,
+                    cat.name,
+                    cat.x_location,
+                    cat.y_location,
+                    cat.is_main,
+                );
+            });
+        } else {
+            res.status(400).json({ msg: "You are not a modifiable user." });
+        }
 
-        const mapId = await maps.insertMap(
-            req.body.mapId,
-            tokenInfo.userNo.toString(),
-            req.body.wallpaperId,
-            req.body.floorId,
-            req.body.title,
-            req.body.description,
-        );
-        req.body.objects.forEach(async function (object) {
-            const colorId = await objectColor.getObjectColorId(
-                object.id,
-                object.color,
-            );
-            const directionId = await objectDirection.getObjectDirectionId(
-                object.id,
-                object.direction,
-            );
-
-            await objectMapping.insertMapObjectMapping(
-                req.body.mapId,
-                object.id,
-                colorId[0].object_color_id,
-                directionId[0].object_direction_id,
-                object.xLocation,
-                object.yLocation,
-                object.link,
-            );
-        });
-
-        await req.body.cats.forEach(async function (cat) {
-            catMapping.insertMapCatMapping(
-                cat.id,
-                req.body.mapId,
-                cat.name,
-                cat.x_location,
-                cat.y_location,
-                cat.is_main,
-            );
-        });
-
-        res.status(200).json({ msg: "수정했습니다" });
+        res.status(200).json({ msg: "update Finsh" });
     } catch (err) {
         res.status(400).json(err);
     }

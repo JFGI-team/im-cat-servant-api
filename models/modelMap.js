@@ -50,10 +50,10 @@ exports.getMapByMapId = async function (mapId) {
 exports.deleteMap = async function (mapId) {
     return new Promise(function (resolve, reject) {
         query = `
-        DELETE FROM   
-            map
-        WHERE
-            map_id = ?
+            DELETE FROM   
+                map
+            WHERE
+                map_id = ?
     `;
         db.query(query, [mapId], function (err, result) {
             if (err) reject(err);
@@ -71,13 +71,13 @@ exports.updateMap = async function (
 ) {
     return new Promise(function (resolve, reject) {
         query = `
-        INSERT INTO
-            map (user_id, wallpaper_id, floor_id, title, description)
-        select 
-            user_id, wallpaper_id, floor_id, title, description
-        from
-            map
-        where map_id = ?
+            INSERT INTO
+                map (user_id, wallpaper_id, floor_id, title, description)
+            select 
+                user_id, wallpaper_id, floor_id, title, description
+            from
+                map
+            where map_id = ?
     `;
         db.query(
             query,
@@ -87,5 +87,21 @@ exports.updateMap = async function (
                 else resolve();
             },
         );
+    });
+};
+
+exports.chkMapUser = async function (mapId) {
+    return new Promise(function (resolve, reject) {
+        query = `        
+            select 
+                user_id
+            from
+                map
+            where map_id = ?
+    `;
+        db.query(query, [mapId], function (err, result) {
+            if (err) reject(err);
+            else resolve(result);
+        });
     });
 };
