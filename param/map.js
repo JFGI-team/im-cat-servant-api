@@ -84,4 +84,12 @@ module.exports = defineParam({
             .withMessage("map_id는 1이상의 자연수여야 합니다"),
     ],
     token: [header("token").not().isEmpty().withMessage("토큰 값이 없습니다!")],
+    mapId: [
+        body("mapId")
+            .not()
+            .isEmpty()
+            .withMessage("1이상의 숫자여야 됩니다!")
+            .isInt({ min: 1 })
+            .withMessage("mapId는 1이상의 자연수여야 합니다"),
+    ],
 });

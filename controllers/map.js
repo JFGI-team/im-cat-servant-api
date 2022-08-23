@@ -4,6 +4,7 @@ const objectMapping = require("../models/modelMapObjectMapping");
 const objectColor = require("../models/modelObjectColor");
 const objectDirection = require("../models/modelObjectDirection");
 const Token = require("../middleware/decryptionToken.js");
+const map = require("../param/map");
 
 exports.saveMapData = async function (req, res, next) {
     const tokenInfo = await Token.verifyToken(req.header("token"));
@@ -137,7 +138,24 @@ exports.updateMapData = async function (req, res, next) {
             res.status(400).json({ msg: "You are not a modifiable user." });
         }
 
-        res.status(200).json({ msg: "update Finsh" });
+        res.status(200).json({ msg: "update Finish" });
+    } catch (err) {
+        res.status(400).json(err);
+    }
+};
+
+exports.deleteMapData = async function (req, res, next) {
+    try {
+        const tokenInfo = await Token.verifyToken(req.header("token"));
+        const chkMapUser = await maps.chkMapUser(req.body.mapId);
+        if (tokenInfo.userNo == chkMapUser[0].user_id) {
+            await maps.deleteMap(req.body.mapId);
+            await catMapping.deleteCatMapping(req.body.mapId);
+            await objectMapping.deleteMapObjectMapping(req.body.mapId);
+        } else {
+            res.status(400).json({ msg: "You are not a modifiable user." });
+        }
+        res.status(200).json({ msg: "delete Finish" });
     } catch (err) {
         res.status(400).json(err);
     }

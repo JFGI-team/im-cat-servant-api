@@ -11,4 +11,7 @@ router.get("/:map_id", mapParam.map_id, (req, res) => {
 router.put("/", mapParam.index, mapParam.token, (req, res) => {
     mapController.updateMapData(req, res);
 });
+router.delete("/", mapParam.mapId, mapParam.token, (req, res) => {
+    mapController.deleteMapData(req, res);
+});
 module.exports = router;
