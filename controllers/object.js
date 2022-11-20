@@ -26,7 +26,7 @@ exports.getObjectIdList = async function (req, res, next) {
         objectListObj.totalCount = objectListObj.objects.length;
     } else {
         return res.status(400).json({
-            error: "NOT_FOUND_SEARCH_RESULT",
+            error: "ERROR_NOT_FOUND_SEARCH_RESULT",
         });
     }
     if (Number(req.query.lastMapId)) {
@@ -38,7 +38,7 @@ exports.getObjectIdList = async function (req, res, next) {
             );
         } else {
             return res.status(400).json({
-                error: "INVALID_LAST_MAP_ID",
+                error: "ERROR_INVALID_LAST_MAP_ID",
             });
         }
     } else objectListObj.objects = objectListObj.objects.slice(0, limit);

@@ -124,11 +124,11 @@ exports.updateProfile = async function (req, res, next) {
 
     if (!map) {
         return res.status(400).json({
-            error: "NOT_FOUND_PROFILE",
+            error: "ERROR_NOT_FOUND_PROFILE",
         });
     }
     if (map.user_id !== decode.userNo)
-        return res.status(400).json({ error: "NO_PERMISSION" });
+        return res.status(400).json({ error: "ERROR_NO_PERMISSION" });
 
     maps.updateProfileByMapId(
         req.body.mapId,
@@ -149,7 +149,7 @@ exports.getProfile = async function (req, res, next) {
     );
     if (!profile) {
         return res.status(400).json({
-            error: "NOT_FOUND",
+            error: "ERROR_NOT_FOUND",
         });
     }
 
@@ -175,7 +175,7 @@ exports.getUserMapList = async function (req, res, next) {
         mapListObject.totalCount = mapListObject.maps.length;
     } else {
         return res.status(400).json({
-            error: "NOT_FOUND_MAP",
+            error: "ERROR_NOT_FOUND_MAP",
         });
     }
 
@@ -188,7 +188,7 @@ exports.getUserMapList = async function (req, res, next) {
             );
         } else {
             return res.status(400).json({
-                error: "INVALID_LAST_MAP_ID",
+                error: "ERROR_INVALID_LAST_MAP_ID",
             });
         }
     } else mapListObject.maps = mapListObject.maps.slice(0, limit);
@@ -226,7 +226,7 @@ exports.getALLMapList = async function (req, res, next) {
         mapListObject.totalCount = mapListObject.maps.length;
     } else {
         return res.status(400).json({
-            error: "NOT_FOUND_MAP",
+            error: "ERROR_NOT_FOUND_MAP",
         });
     }
     if (Number(req.query.lastMapId)) {
@@ -238,7 +238,7 @@ exports.getALLMapList = async function (req, res, next) {
             );
         } else {
             return res.status(400).json({
-                error: "INVALID_LAST_MAP_ID",
+                error: "ERROR_INVALID_LAST_MAP_ID",
             });
         }
     } else mapListObject.maps = mapListObject.maps.slice(0, limit);
