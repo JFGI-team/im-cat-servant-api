@@ -7,7 +7,7 @@ router.post("/", mapParam.index, mapController.saveMapData);
 router.get("/profile", mapParam.profileGet, mapController.getProfile);
 router.post("/profile", mapParam.profileInsert, mapController.saveProfile);
 router.put("/profile", mapParam.profileUpdate, mapController.updateProfile);
-router.get("/user/list", mapParam.userList, mapController.getUserMapList);
+router.get("/list", mapParam.list, mapController.getALLMapList);
 router.get("/:map_id", mapParam.map_id, (req, res) => {
     mapController.getMapAllObject(req, res);
 });

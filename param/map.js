@@ -105,7 +105,8 @@ module.exports = defineParam({
         body("title").trim().not().isEmpty().withMessage("title이 없습니다."),
         body("description").trim(),
     ],
-    userList: [
+    list: [
+        query("searchKeyword").trim().optional(),
         query("limit")
             .not()
             .isEmpty()

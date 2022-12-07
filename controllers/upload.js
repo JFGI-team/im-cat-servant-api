@@ -7,7 +7,7 @@ exports.upload = function (req, res, next) {
     const form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         if (files.image.size == 0) {
-            res.status(400).json({ msg: "error: image is empty" });
+            res.status(400).json({ error: "ERROR_EMPTY_IMAGE" });
         } else {
             const s3 = new aws.S3();
             const body = sharp(files.image.filepath).resize(128, 128).jpeg();

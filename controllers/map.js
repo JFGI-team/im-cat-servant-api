@@ -124,11 +124,11 @@ exports.updateProfile = async function (req, res, next) {
 
     if (!map) {
         return res.status(400).json({
-            error: "NOT_FOUND_PROFILE",
+            error: "ERROR_NOT_FOUND_PROFILE",
         });
     }
     if (map.user_id !== decode.userNo)
-        return res.status(400).json({ error: "NO_PERMISSION" });
+        return res.status(400).json({ error: "ERROR_NO_PERMISSION" });
 
     maps.updateProfileByMapId(
         req.body.mapId,
@@ -149,7 +149,7 @@ exports.getProfile = async function (req, res, next) {
     );
     if (!profile) {
         return res.status(400).json({
-            error: "NOT_FOUND",
+            error: "ERROR_NOT_FOUND",
         });
     }
 
@@ -164,6 +164,7 @@ exports.getUserMapList = async function (req, res, next) {
     const decode = await decryption.verifyToken(req.headers.authorization);
     const userMapStr = await maps.getUserMapStrByUserId(decode.userNo);
     const limit = req.query.limit;
+
     const mapListObject = new Object({
         totalCount: 0,
         maps: [],
@@ -174,7 +175,7 @@ exports.getUserMapList = async function (req, res, next) {
         mapListObject.totalCount = mapListObject.maps.length;
     } else {
         return res.status(400).json({
-            error: "NOT_FOUND_MAP",
+            error: "ERROR_NOT_FOUND_MAP",
         });
     }
 
@@ -187,7 +188,7 @@ exports.getUserMapList = async function (req, res, next) {
             );
         } else {
             return res.status(400).json({
-                error: "INVALID_LAST_MAP_ID",
+                error: "ERROR_INVALID_LAST_MAP_ID",
             });
         }
     } else mapListObject.maps = mapListObject.maps.slice(0, limit);
@@ -203,6 +204,61 @@ exports.getUserMapList = async function (req, res, next) {
             userId: map.user_id,
             nickname: map.nickname,
             previewImageUrl: map.image_url,
+        };
+    });
+
+    res.json({
+        totalCount: mapListObject.totalCount,
+        maps: mapListObject.maps,
+    });
+};
+
+exports.getALLMapList = async function (req, res, next) {
+    const allMapStr = await maps.getAllMapStrBySearch(req.query.searchKeyword);
+    const limit = Number(req.query.limit);
+    const mapListObject = new Object({
+        totalCount: 0,
+        maps: [],
+    });
+
+    if (allMapStr.mapId) {
+        mapListObject.maps = allMapStr.mapId.split(",");
+        mapListObject.totalCount = mapListObject.maps.length;
+    } else {
+        return res.status(400).json({
+            error: "ERROR_NOT_FOUND_MAP",
+        });
+    }
+    if (Number(req.query.lastMapId)) {
+        const index = mapListObject.maps.indexOf(req.query.lastMapId);
+        if (index !== -1) {
+            mapListObject.maps = mapListObject.maps.slice(
+                index + 1,
+                index + 1 + limit,
+            );
+        } else {
+            return res.status(400).json({
+                error: "ERROR_INVALID_LAST_MAP_ID",
+            });
+        }
+    } else mapListObject.maps = mapListObject.maps.slice(0, limit);
+
+    if (mapListObject.maps.length) {
+        mapListObject.maps = await maps.getMapListAndCatByIdList(
+            mapListObject.maps,
+        );
+    }
+
+    mapListObject.maps.map(function (map, i) {
+        mapListObject.maps[i] = {
+            mapId: map.map_id,
+            title: map.title,
+            userId: map.user_id,
+            description: map.description,
+            nickname: map.nickname,
+            previewImageUrl: map.mapPreviewImage,
+            catId: map.cat_id,
+            catImageUrl: map.catImage,
         };
     });
 

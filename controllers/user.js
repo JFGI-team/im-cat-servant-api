@@ -18,7 +18,7 @@ exports.insertUser = async function (req, res, next) {
         );
         res.status(200).json({ message: "success" });
     } else {
-        res.status(400).json({ message: "exist ID try another ID" });
+        res.status(400).json({ error: "ERROR_EXIST_ID" });
     }
 };
 exports.verify = async function (req, res, next) {
@@ -36,6 +36,6 @@ exports.verify = async function (req, res, next) {
         );
         return res.status(200).json({ token });
     } catch (error) {
-        res.status(400).json({ error: "비밀번호가 일치하지 않습니다." });
+        res.status(400).json({ error: "ERROR_INCORRECT_PASSWORD" });
     }
 };

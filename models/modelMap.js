@@ -119,3 +119,48 @@ exports.getMapListByIdList = async function (mapIdList) {
         });
     });
 };
+
+exports.getAllMapStrBySearch = async function (searchKeyword) {
+    return new Promise(function (resolve, reject) {
+        let searchWhere = "";
+        if (searchKeyword) searchWhere = `AND title LIKE "%${searchKeyword}%"`;
+
+        query = `
+            SELECT 
+                GROUP_CONCAT(map_id ORDER BY map_id) AS mapId
+            FROM 
+                map
+            WHERE
+                1=1
+                ${searchWhere}
+        `;
+        db.query(query, function (err, result) {
+            if (!err) resolve(result[0]);
+            else reject(err);
+        });
+    });
+};
+
+exports.getMapListAndCatByIdList = async function (mapIdList) {
+    return new Promise(function (resolve, reject) {
+        query = `
+            SELECT
+                m.map_id, m.user_id, m.title, m.description, u.nickname, mp.image_url AS mapPreviewImage, mcm.object_cat_id, oc.image_url AS catImage
+            FROM
+                map AS m
+                LEFT JOIN user AS u ON(m.user_id = u.user_id)
+                LEFT JOIN map_preview AS mp ON(m.map_id = mp.map_id)
+                LEFT JOIN map_cat_mapping AS mcm ON(m.map_id = mcm.map_id)
+                LEFT JOIN object_cat AS oc ON(mcm.object_cat_id = oc.object_cat_id)
+            WHERE
+                mcm.is_main = "T" 
+                AND m.map_id IN (?)
+            ORDER BY 
+                map_id
+        `;
+        db.query(query, [mapIdList], function (err, result) {
+            if (!err) resolve(result);
+            else reject(err);
+        });
+    });
+};
